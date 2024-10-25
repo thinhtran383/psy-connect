@@ -5,6 +5,10 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -15,6 +19,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "Doctors", schema = "psy")
 public class Doctor {
     @Id
@@ -50,29 +55,40 @@ public class Doctor {
     @Column(name = "experience_years", nullable = false)
     private Integer experienceYears;
 
-    @ColumnDefault("0")
     @Column(name = "rating")
     private Float rating;
 
-    @ColumnDefault("0")
     @Column(name = "total_ratings")
     private Integer totalRatings;
 
-    @ColumnDefault("0")
     @Column(name = "successful_sessions")
     private Integer successfulSessions;
 
-    @ColumnDefault("CURRENT_TIMESTAMP")
+    @CreatedDate
     @Column(name = "created_at")
     private Instant createdAt;
 
-    @ColumnDefault("CURRENT_TIMESTAMP")
+    @LastModifiedDate
     @Column(name = "updated_at")
     private Instant updatedAt;
 
 
     @PrePersist
     protected void onCreate() {
-        this.id = (int) (Math.random() * 1000000);
+        if (this.id == null) {
+            this.id = (int) (Math.random() * 1000000);
+        }
+
+
+        if (this.rating == null) {
+            this.rating = 0.0f;
+        }
+        if (this.totalRatings == null) {
+            this.totalRatings = 0;
+        }
+        if (this.successfulSessions == null) {
+            this.successfulSessions = 0;
+        }
+
     }
 }

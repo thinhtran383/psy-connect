@@ -6,7 +6,7 @@ CREATE TABLE Users
     email      VARCHAR(255)                        NOT NULL UNIQUE,
     password   VARCHAR(255)                        NOT NULL,
     role       ENUM ('DOCTOR', 'PATIENT', 'ADMIN') NOT NULL,
-    status     ENUM ('pending', 'approved', 'rejected') DEFAULT 'pending',
+    status     ENUM ('PENDING', 'APPROVED', 'REJECTED') DEFAULT 'PENDING',
     created_at TIMESTAMP                                DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP                                DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
@@ -46,7 +46,8 @@ CREATE TABLE Patients
     address    VARCHAR(255),
     phone      varchar(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    foreign key (user_id) references Users (user_id)
 );
 
 -- Tạo bảng `doctors` để lưu trữ thông tin bác sĩ

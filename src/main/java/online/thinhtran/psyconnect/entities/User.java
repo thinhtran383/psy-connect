@@ -7,6 +7,9 @@ import lombok.*;
 import online.thinhtran.psyconnect.common.RoleEnum;
 import online.thinhtran.psyconnect.common.StatusEnum;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,6 +26,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class User implements UserDetails {
     @Id
     @Column(name = "user_id", nullable = false)
@@ -48,15 +52,14 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private RoleEnum role;
 
-    @ColumnDefault("'pending'")
     @Enumerated(EnumType.STRING)
     private StatusEnum status;
 
-    @ColumnDefault("CURRENT_TIMESTAMP")
+    @CreatedDate
     @Column(name = "created_at")
     private Instant createdAt;
 
-    @ColumnDefault("CURRENT_TIMESTAMP")
+    @LastModifiedDate
     @Column(name = "updated_at")
     private Instant updatedAt;
 
@@ -92,9 +95,9 @@ public class User implements UserDetails {
 
     @PrePersist
     protected void onCreate() {
-      this.id = (int) (Math.random() * 1000000);
-    }
+        this.id = (int) (Math.random() * 1000000);
 
+    }
 
 
 }
