@@ -1,4 +1,4 @@
-package online.thinhtran.psyconnect.responses.Auth;
+package online.thinhtran.psyconnect.responses.auth;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;

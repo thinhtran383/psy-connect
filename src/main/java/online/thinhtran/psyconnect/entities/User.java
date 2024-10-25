@@ -55,6 +55,12 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private StatusEnum status;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Doctor doctor;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Patient patient;
+
     @CreatedDate
     @Column(name = "created_at")
     private Instant createdAt;
@@ -90,7 +96,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return role != RoleEnum.DOCTOR;
+        return this.status == StatusEnum.APPROVED;
     }
 
     @PrePersist

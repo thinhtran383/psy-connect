@@ -11,6 +11,6 @@ import java.util.List;
 @Builder
 public class PageableResponse<T> {
     private List<T> data;
-    private int totalPages;
+    private long totalPages;
     private long totalElements;
 }

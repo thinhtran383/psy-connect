@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import online.thinhtran.psyconnect.common.RoleEnum;
 import online.thinhtran.psyconnect.common.StatusEnum;
+import online.thinhtran.psyconnect.components.JwtGenerator;
+import online.thinhtran.psyconnect.dto.LoginDto;
 import online.thinhtran.psyconnect.dto.RegisterDto;
 import online.thinhtran.psyconnect.entities.Doctor;
 import online.thinhtran.psyconnect.entities.Patient;
@@ -12,10 +14,13 @@ import online.thinhtran.psyconnect.exceptions.ResourceAlreadyExisted;
 import online.thinhtran.psyconnect.repositories.DoctorRepository;
 import online.thinhtran.psyconnect.repositories.PatientRepository;
 import online.thinhtran.psyconnect.repositories.UserRepository;
-import online.thinhtran.psyconnect.responses.Auth.DoctorRegisterResponse;
-import online.thinhtran.psyconnect.responses.Auth.PatientRegisterResponse;
-import online.thinhtran.psyconnect.responses.Auth.RegisterResponse;
+import online.thinhtran.psyconnect.responses.auth.DoctorRegisterResponse;
+import online.thinhtran.psyconnect.responses.auth.LoginResponse;
+import online.thinhtran.psyconnect.responses.auth.PatientRegisterResponse;
+import online.thinhtran.psyconnect.responses.auth.RegisterResponse;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +34,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final DoctorRepository doctorRepository;
     private final PatientRepository patientRepository;
+    private final JwtGenerator jwtGenerator;
 
     @Transactional
     public RegisterResponse register(RegisterDto registerDto) {
@@ -136,4 +142,65 @@ public class AuthService {
     }
 
 
+    @Transactional(readOnly = true)
+    public LoginResponse login(LoginDto loginDto) {
+        User user = userRepository.findByUsername(loginDto.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
+            throw new BadCredentialsException("Invalid password");
+        }
+
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                loginDto.getUsername(),
+                loginDto.getPassword(),
+                user.getAuthorities()
+        );
+
+        authenticationManager.authenticate(authenticationToken);
+
+        String jwtToken = jwtGenerator.generateToken(user);
+
+        if (loginDto.getRole().equalsIgnoreCase(RoleEnum.DOCTOR.name())) {
+            Doctor doctor = doctorRepository.findByUser_Username(loginDto.getUsername())
+                    .orElseThrow(() -> new RuntimeException("doctors not found"));
+            return LoginResponse.builder()
+                    .username(user.getUsername())
+                    .name(doctor.getName())
+                    .email(user.getEmail())
+                    .phone(doctor.getPhone())
+                    .address(doctor.getAddress())
+                    .dob(doctor.getDob())
+                    .specialization(doctor.getSpecialization())
+                    .token(jwtToken)
+                    .role(user.getRole().name())
+                    .build();
+        } else {
+            Patient patient = patientRepository.findByUser_Username(loginDto.getUsername())
+                    .orElseThrow(() -> new RuntimeException("Patient not found"));
+            return LoginResponse.builder()
+                    .username(user.getUsername())
+                    .name(patient.getName())
+                    .email(user.getEmail())
+                    .phone(patient.getPhone())
+                    .address(patient.getAddress())
+                    .dob(patient.getDob())
+                    .token(jwtToken)
+                    .role(user.getRole().name())
+                    .build();
+        }
+    }
+
+    @Transactional
+    public void approveDoctor(Integer id) {
+        Doctor doctor = doctorRepository.findByUser_Id(id)
+                .orElseThrow(() -> new RuntimeException("doctors not found"));
+
+        if (doctor.getUser().getRole() == RoleEnum.DOCTOR && doctor.getUser().getStatus() == StatusEnum.PENDING) {
+            doctor.getUser().setStatus(StatusEnum.APPROVED);
+            doctorRepository.save(doctor);
+        } else {
+            throw new RuntimeException("Invalid request");
+        }
+    }
 }
