@@ -9,6 +9,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import javax.management.relation.Role;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -27,6 +29,7 @@ public class JwtGenerator {
                 .withSubject(user.getUsername())
                 .withClaim("roles", roles)
                 .withClaim("userId", user.getId())
+                .withExpiresAt(new Date(System.currentTimeMillis() + 864000000))
                 .sign(Algorithm.HMAC256(secretKey));
 
         return token;

@@ -18,6 +18,7 @@ import online.thinhtran.psyconnect.responses.auth.DoctorRegisterResponse;
 import online.thinhtran.psyconnect.responses.auth.LoginResponse;
 import online.thinhtran.psyconnect.responses.auth.PatientRegisterResponse;
 import online.thinhtran.psyconnect.responses.auth.RegisterResponse;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -37,6 +38,7 @@ public class AuthService {
     private final JwtGenerator jwtGenerator;
 
     @Transactional
+    @CacheEvict(value = "users", allEntries = true)
     public RegisterResponse register(RegisterDto registerDto) {
         if (registerDto.getRole().equalsIgnoreCase(RoleEnum.DOCTOR.name())) {
             return registerDoctor(registerDto);
