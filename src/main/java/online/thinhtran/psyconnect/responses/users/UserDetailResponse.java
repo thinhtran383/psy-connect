@@ -2,6 +2,8 @@ package online.thinhtran.psyconnect.responses.users;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
+import online.thinhtran.psyconnect.entities.Doctor;
+import online.thinhtran.psyconnect.entities.Patient;
 import online.thinhtran.psyconnect.entities.User;
 
 import java.time.LocalDate;
@@ -34,19 +36,27 @@ public class UserDetailResponse {
                 .build();
 
         if (user.getDoctor() != null) {
-            userResponse.setName(user.getDoctor().getName());
-            userResponse.setPhone(user.getDoctor().getPhone());
-            userResponse.setAddress(user.getDoctor().getAddress());
-            userResponse.setDob(user.getDoctor().getDob());
-            userResponse.setSpecialization(user.getDoctor().getSpecialization());
+            Doctor doctor = user.getDoctor();
+
+            userResponse.setName(doctor.getName());
+            userResponse.setPhone(doctor.getPhone());
+            userResponse.setAddress(doctor.getAddress());
+            userResponse.setDob(doctor.getDob());
+            userResponse.setSpecialization(doctor.getSpecialization());
             userResponse.setRole(user.getRole().name());
+            userResponse.setCreatedDate(LocalDateTime.from(doctor.getCreatedAt()));
+            userResponse.setLastModifiedDate(LocalDateTime.from(doctor.getUpdatedAt()));
 
         } else if (user.getPatient() != null) {
-            userResponse.setName(user.getPatient().getName());
-            userResponse.setPhone(user.getPatient().getPhone());
-            userResponse.setAddress(user.getPatient().getAddress());
-            userResponse.setDob(user.getPatient().getDob());
+            Patient patient = user.getPatient();
+
+            userResponse.setName(patient.getName());
+            userResponse.setPhone(patient.getPhone());
+            userResponse.setAddress(patient.getAddress());
+            userResponse.setDob(patient.getDob());
             userResponse.setRole(user.getRole().name());
+            userResponse.setCreatedDate(LocalDateTime.from(patient.getCreatedAt()));
+            userResponse.setLastModifiedDate(LocalDateTime.from(patient.getUpdatedAt()));
         }
 
         return userResponse;
