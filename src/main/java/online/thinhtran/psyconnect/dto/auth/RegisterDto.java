@@ -1,4 +1,4 @@
-package online.thinhtran.psyconnect.dto;
+package online.thinhtran.psyconnect.dto.auth;
 
 import lombok.*;
 

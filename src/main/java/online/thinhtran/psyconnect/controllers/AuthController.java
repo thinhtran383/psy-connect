@@ -1,8 +1,8 @@
 package online.thinhtran.psyconnect.controllers;
 
 import lombok.RequiredArgsConstructor;
-import online.thinhtran.psyconnect.dto.LoginDto;
-import online.thinhtran.psyconnect.dto.RegisterDto;
+import online.thinhtran.psyconnect.dto.auth.LoginDto;
+import online.thinhtran.psyconnect.dto.auth.RegisterDto;
 import online.thinhtran.psyconnect.responses.auth.LoginResponse;
 import online.thinhtran.psyconnect.responses.auth.RegisterResponse;
 import online.thinhtran.psyconnect.responses.Response;
