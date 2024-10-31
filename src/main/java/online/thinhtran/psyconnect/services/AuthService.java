@@ -12,6 +12,7 @@ import online.thinhtran.psyconnect.entities.Patient;
 import online.thinhtran.psyconnect.entities.User;
 import online.thinhtran.psyconnect.exceptions.ResourceAlreadyExisted;
 import online.thinhtran.psyconnect.repositories.DoctorRepository;
+import online.thinhtran.psyconnect.repositories.GrantedTokenRepository;
 import online.thinhtran.psyconnect.repositories.PatientRepository;
 import online.thinhtran.psyconnect.repositories.UserRepository;
 import online.thinhtran.psyconnect.responses.auth.DoctorRegisterResponse;
@@ -36,6 +37,7 @@ public class AuthService {
     private final DoctorRepository doctorRepository;
     private final PatientRepository patientRepository;
     private final JwtGenerator jwtGenerator;
+    private final GrantedTokenService grantedTokenService;
 
     @Transactional
     @CacheEvict(value = "users", allEntries = true)
@@ -52,18 +54,16 @@ public class AuthService {
     }
 
     private PatientRegisterResponse registerPatient(RegisterDto registerDto) {
-        Patient existingPatient = patientRepository.findByUser_Username(registerDto.getUsername()).orElse(null);
-
-        if (existingPatient != null) {
-            if (existingPatient.getUser().getEmail() != null && existingPatient.getUser().getEmail().equals(registerDto.getEmail())) {
-                throw new ResourceAlreadyExisted("Patient already existed with this email");
-            }
-
-            if (existingPatient.getPhone() != null && existingPatient.getPhone().equals(registerDto.getPhone())) {
-                throw new ResourceAlreadyExisted("Patient already existed with this phone");
-            }
-
+        if (userRepository.existsByUsername(registerDto.getUsername())) {
             throw new ResourceAlreadyExisted("Patient already existed with this username");
+        }
+
+        if (userRepository.existsByEmail(registerDto.getEmail())) {
+            throw new ResourceAlreadyExisted("Patient already existed with this email");
+        }
+
+        if (patientRepository.existsByPhone(registerDto.getPhone())) {
+            throw new ResourceAlreadyExisted("Patient already existed with this phone");
         }
 
         User user = User.builder()
@@ -95,19 +95,16 @@ public class AuthService {
     }
 
     private DoctorRegisterResponse registerDoctor(RegisterDto registerDto) {
-        Doctor existingDoctor = doctorRepository.findByUser_Username(registerDto.getUsername()).orElse(null);
-
-        if (existingDoctor != null) {
-            if (existingDoctor.getUser().getEmail() != null && existingDoctor.getUser().getEmail().equals(registerDto.getEmail())) {
-                throw new ResourceAlreadyExisted("Doctor already existed with this email");
-            }
-
-            if (existingDoctor.getPhone() != null && existingDoctor.getPhone().equals(registerDto.getPhone())) {
-                throw new ResourceAlreadyExisted("Doctor already existed with this phone");
-            }
-
-
+        if (userRepository.existsByUsername(registerDto.getUsername())) {
             throw new ResourceAlreadyExisted("Doctor already existed with this username");
+        }
+
+        if (userRepository.existsByEmail(registerDto.getEmail())) {
+            throw new ResourceAlreadyExisted("Doctor already existed with this email");
+        }
+
+        if (doctorRepository.existsByPhone(registerDto.getPhone())) {
+            throw new ResourceAlreadyExisted("Doctor already existed with this phone");
         }
 
         User user = User.builder()
@@ -162,10 +159,10 @@ public class AuthService {
         authenticationManager.authenticate(authenticationToken);
 
         String jwtToken = jwtGenerator.generateToken(user);
+        grantedTokenService.grantToken(jwtToken);
 
         if (loginDto.getRole().equalsIgnoreCase(RoleEnum.DOCTOR.name())) {
-            Doctor doctor = doctorRepository.findByUser_Username(loginDto.getUsername())
-                    .orElseThrow(() -> new RuntimeException("doctors not found"));
+            Doctor doctor = user.getDoctor();
             return LoginResponse.builder()
                     .username(user.getUsername())
                     .name(doctor.getName())
@@ -178,8 +175,7 @@ public class AuthService {
                     .role(user.getRole().name())
                     .build();
         } else {
-            Patient patient = patientRepository.findByUser_Username(loginDto.getUsername())
-                    .orElseThrow(() -> new RuntimeException("Patient not found"));
+            Patient patient = user.getPatient();
             return LoginResponse.builder()
                     .username(user.getUsername())
                     .name(patient.getName())
