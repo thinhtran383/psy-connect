@@ -10,7 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class PageableResponse<T> {
-    private List<T> data;
+    private List<T> elements;
     private long totalPages;
     private long totalElements;
 }
