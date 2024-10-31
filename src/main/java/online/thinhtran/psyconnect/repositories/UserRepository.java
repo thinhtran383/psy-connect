@@ -10,12 +10,9 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
 
-    @EntityGraph(attributePaths = {"doctor", "patient"})
     Optional<User> findByUsername(String username);
 
-    @EntityGraph(attributePaths = {"doctor", "patient"})
     Page<User> findAll(Pageable pageable);
-
 
     boolean existsByUsername(String username);
 

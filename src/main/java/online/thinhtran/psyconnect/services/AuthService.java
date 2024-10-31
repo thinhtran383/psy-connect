@@ -161,7 +161,7 @@ public class AuthService {
         grantedTokenService.grantToken(jwtToken);
 
         if (loginDto.getRole().equalsIgnoreCase(RoleEnum.DOCTOR.name())) {
-            Doctor doctor = user.getDoctor();
+            Doctor doctor = doctorRepository.findByUser_Username(user.getUsername()).orElseThrow();
             return LoginResponse.builder()
                     .username(user.getUsername())
                     .name(doctor.getName())
@@ -174,7 +174,7 @@ public class AuthService {
                     .role(user.getRole().name())
                     .build();
         } else {
-            Patient patient = user.getPatient();
+            Patient patient = patientRepository.findByUser_Username(user.getUsername()).orElseThrow();
             return LoginResponse.builder()
                     .username(user.getUsername())
                     .name(patient.getName())

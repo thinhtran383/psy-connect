@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -27,17 +28,19 @@ public class Post {
     @Column(name = "title", nullable = false)
     private String title;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tag_id")
+    private Tag tag;
+
     @NotNull
     @Lob
     @Column(name = "content", nullable = false)
     private String content;
 
-    @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "created_at")
-    private Instant createdAt;
+    private LocalDateTime createdAt;
 
-    @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "updated_at")
-    private Instant updatedAt;
+    private LocalDateTime updatedAt;
 
 }

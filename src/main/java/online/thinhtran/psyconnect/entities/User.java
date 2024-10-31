@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsChecker;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -55,19 +56,19 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private StatusEnum status;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private Doctor doctor;
-
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private Patient patient;
+//    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+//    private Doctor doctor;
+//
+//    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+//    private Patient patient;
 
     @CreatedDate
     @Column(name = "created_at")
-    private Instant createdAt;
+    private LocalDateTime createdAt;
 
     @LastModifiedDate
     @Column(name = "updated_at")
-    private Instant updatedAt;
+    private LocalDateTime updatedAt;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

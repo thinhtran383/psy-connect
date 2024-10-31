@@ -2,7 +2,11 @@ package online.thinhtran.psyconnect.services;
 
 import lombok.RequiredArgsConstructor;
 import online.thinhtran.psyconnect.common.RoleEnum;
+import online.thinhtran.psyconnect.entities.Doctor;
+import online.thinhtran.psyconnect.entities.Patient;
 import online.thinhtran.psyconnect.entities.User;
+import online.thinhtran.psyconnect.repositories.DoctorRepository;
+import online.thinhtran.psyconnect.repositories.PatientRepository;
 import online.thinhtran.psyconnect.repositories.UserRepository;
 import online.thinhtran.psyconnect.responses.PageableResponse;
 import online.thinhtran.psyconnect.responses.users.UserDetailResponse;
@@ -15,6 +19,7 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.print.Doc;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +28,8 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
+    private final DoctorRepository doctorRepository;
+    private final PatientRepository patientRepository;
 
     @Transactional(readOnly = true)
     public User getUserByUsername(String username) {
@@ -59,6 +66,35 @@ public class UserService {
     public UserDetailResponse getUserDetail(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
 
-        return UserDetailResponse.fromEntity(user);
+        Doctor doctor = doctorRepository.findByUser_Username(username).orElse(null);
+        Patient patient = patientRepository.findByUser_Username(username).orElse(null);
+
+        if (doctor != null) {
+            return UserDetailResponse.builder()
+                    .name(doctor.getName())
+                    .email(user.getEmail())
+                    .phone(doctor.getPhone())
+                    .dob(doctor.getDob())
+                    .specialization(doctor.getSpecialization())
+                    .role(user.getRole().name())
+                    .createdDate(user.getCreatedAt())
+                    .lastModifiedDate(user.getUpdatedAt())
+                    .build();
+        }
+
+        if (patient != null) {
+            return UserDetailResponse.builder()
+                    .name(patient.getName())
+                    .email(user.getEmail())
+                    .phone(patient.getPhone())
+                    .dob(patient.getDob())
+                    .role(user.getRole().name())
+                    .createdDate(user.getCreatedAt())
+                    .lastModifiedDate(user.getUpdatedAt())
+                    .build();
+        }
+
+        return null;
     }
+
 }

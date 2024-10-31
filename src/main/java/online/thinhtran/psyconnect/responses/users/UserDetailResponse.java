@@ -30,36 +30,5 @@ public class UserDetailResponse {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastModifiedDate;
 
-    public static UserDetailResponse fromEntity(User user) {
-        UserDetailResponse userResponse = UserDetailResponse.builder()
-                .email(user.getEmail())
-                .build();
-
-        if (user.getDoctor() != null) {
-            Doctor doctor = user.getDoctor();
-
-            userResponse.setName(doctor.getName());
-            userResponse.setPhone(doctor.getPhone());
-            userResponse.setAddress(doctor.getAddress());
-            userResponse.setDob(doctor.getDob());
-            userResponse.setSpecialization(doctor.getSpecialization());
-            userResponse.setRole(user.getRole().name());
-            userResponse.setCreatedDate(LocalDateTime.from(doctor.getCreatedAt()));
-            userResponse.setLastModifiedDate(LocalDateTime.from(doctor.getUpdatedAt()));
-
-        } else if (user.getPatient() != null) {
-            Patient patient = user.getPatient();
-
-            userResponse.setName(patient.getName());
-            userResponse.setPhone(patient.getPhone());
-            userResponse.setAddress(patient.getAddress());
-            userResponse.setDob(patient.getDob());
-            userResponse.setRole(user.getRole().name());
-            userResponse.setCreatedDate(LocalDateTime.from(patient.getCreatedAt()));
-            userResponse.setLastModifiedDate(LocalDateTime.from(patient.getUpdatedAt()));
-        }
-
-        return userResponse;
-    }
 
 }
