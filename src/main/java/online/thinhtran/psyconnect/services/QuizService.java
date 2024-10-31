@@ -1,8 +1,12 @@
 package online.thinhtran.psyconnect.services;
 
 import lombok.RequiredArgsConstructor;
+import online.thinhtran.psyconnect.dto.quiz.QuizAnswerDto;
 import online.thinhtran.psyconnect.entities.Quiz;
+import online.thinhtran.psyconnect.entities.User;
+import online.thinhtran.psyconnect.entities.UserAnswer;
 import online.thinhtran.psyconnect.repositories.QuizRepository;
+import online.thinhtran.psyconnect.repositories.UserAnswerRepository;
 import online.thinhtran.psyconnect.responses.quiz.QuizResponse;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -16,12 +20,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class QuizService {
     private final QuizRepository quizRepository;
+    private final UserAnswerRepository userAnswerRepository;
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Cacheable(value = "quiz")
     public List<QuizResponse> getQuiz() {
         List<Quiz> quizzes = quizRepository.findAll();
-
         return quizzes.stream()
                 .map(quiz -> QuizResponse.builder()
                         .id(quiz.getId())
@@ -30,5 +34,18 @@ public class QuizService {
                         .build())
                 .toList();
 
+    }
+
+    @Transactional
+    public void saveAnswer(List<QuizAnswerDto> answerList, Integer userId) {
+        List<UserAnswer> userAnswers = answerList.stream()
+                .map(answer -> UserAnswer.builder()
+                        .userId(userId)
+                        .quizId(answer.getQuizId())
+                        .answer(answer.getAnswer())
+                        .build())
+                .toList();
+
+        userAnswerRepository.saveAll(userAnswers);
     }
 }
