@@ -7,12 +7,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.redis.core.RedisHash;
 
-@RedisHash("RevokeToken")
+@RedisHash("GrantedToken")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class RevokeToken {
+public class GrantedToken {
     @Id
     private String token;
 }

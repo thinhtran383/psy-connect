@@ -3,6 +3,7 @@ package online.thinhtran.psyconnect.exceptions;
 import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -38,6 +39,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ResourceAlreadyExisted.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public Map<String, String> handleResourceAlreadyExisted(ResourceAlreadyExisted ex) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("error", ex.getMessage());
+        return errors;
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public Map<String, String> handleBadCredentials(BadCredentialsException ex) {
         Map<String, String> errors = new HashMap<>();
         errors.put("error", ex.getMessage());
         return errors;

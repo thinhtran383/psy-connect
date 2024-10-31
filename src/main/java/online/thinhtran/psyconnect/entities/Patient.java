@@ -22,7 +22,6 @@ import java.time.LocalDate;
 @EntityListeners(AuditingEntityListener.class)
 public class Patient {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "patient_id", nullable = false)
     private Integer id;
 

@@ -9,8 +9,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
-  Optional<User> findByUsername(String username);
 
-  @EntityGraph(attributePaths = {"doctor", "patient"})
-  Page<User> findAll(Pageable pageable);
+    @EntityGraph(attributePaths = {"doctor", "patient"})
+    Optional<User> findByUsername(String username);
+
+    @EntityGraph(attributePaths = {"doctor", "patient"})
+    Page<User> findAll(Pageable pageable);
+
+
+    boolean existsByUsername(String username);
+
+    boolean existsByEmail(String email);
 }

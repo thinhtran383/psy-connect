@@ -5,11 +5,13 @@ import online.thinhtran.psyconnect.common.RoleEnum;
 import online.thinhtran.psyconnect.entities.User;
 import online.thinhtran.psyconnect.repositories.UserRepository;
 import online.thinhtran.psyconnect.responses.PageableResponse;
+import online.thinhtran.psyconnect.responses.users.UserDetailResponse;
 import online.thinhtran.psyconnect.responses.users.UserResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
 
     @Transactional(readOnly = true)
     public User getUserByUsername(String username) {
@@ -39,15 +42,23 @@ public class UserService {
                     .toList();
         }
 
+        // calculate total pages and total elements
         int totalElements = content.size();
         int totalPages = (totalElements + size - 1) / size;
 
         return PageableResponse.<UserResponse>builder()
-                .data(content.stream()
-                        .map(UserResponse::fromEntity)
+                .elements(content.stream()
+                        .map(user -> modelMapper.map(user, UserResponse.class))
                         .collect(Collectors.toList()))
-                .totalPages(totalPages)
                 .totalElements(totalElements)
+                .totalPages(totalPages)
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    public UserDetailResponse getUserDetail(String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+
+        return UserDetailResponse.fromEntity(user);
     }
 }
