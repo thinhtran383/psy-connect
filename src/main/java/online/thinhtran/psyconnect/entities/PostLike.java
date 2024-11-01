@@ -1,8 +1,7 @@
 package online.thinhtran.psyconnect.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
@@ -10,9 +9,13 @@ import java.time.Instant;
 @Getter
 @Setter
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Table(name = "PostLikes", schema = "psy")
 public class PostLike {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "like_id", nullable = false)
     private Integer id;
 
