@@ -24,4 +24,16 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
                 group by p.id
             """)
     Page<Object[]> findAllWithLikesAndComments(Pageable pageable);
+
+    @Query("""
+                select p.title, p.content, t.tagName, count(pl), count(c), u.username, p.createdAt, p.updatedAt,
+                case when count(pl) > 0 then true else false end as isLiked
+                from Post p
+                left join PostLike pl on pl.post.id = p.id
+                left join Comment c on c.post.id = p.id
+                left join User u on u.id = p.user.id
+                left join Tag t on t.id = p.tag.id
+                where p.id = :postId and u.id = :userId
+            """)
+    Object findAllWithLikeAndCommentsByPostId(Integer postId, Integer userId);
 }
