@@ -18,7 +18,7 @@ import java.io.IOException;
 public class CorsFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        log.debug("CORS filter triggered for request: {}", request.getRequestURI());
+        log.error("CORS filter triggered for request: {}", request.getRequestURI());
 
         response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Access-Control-Allow-Methods", "POST, PUT, GET, OPTIONS, DELETE");

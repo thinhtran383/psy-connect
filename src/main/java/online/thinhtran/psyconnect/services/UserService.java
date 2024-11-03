@@ -9,6 +9,7 @@ import online.thinhtran.psyconnect.repositories.DoctorRepository;
 import online.thinhtran.psyconnect.repositories.PatientRepository;
 import online.thinhtran.psyconnect.repositories.UserRepository;
 import online.thinhtran.psyconnect.responses.PageableResponse;
+import online.thinhtran.psyconnect.responses.post.PostResponse;
 import online.thinhtran.psyconnect.responses.users.UserDetailResponse;
 import online.thinhtran.psyconnect.responses.users.UserResponse;
 import org.modelmapper.ModelMapper;
@@ -96,5 +97,6 @@ public class UserService {
 
         return null;
     }
+
 
 }

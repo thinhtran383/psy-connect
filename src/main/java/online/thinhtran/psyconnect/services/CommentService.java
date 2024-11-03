@@ -1,6 +1,10 @@
 package online.thinhtran.psyconnect.services;
 
 import lombok.RequiredArgsConstructor;
+import online.thinhtran.psyconnect.dto.comments.CommentDto;
+import online.thinhtran.psyconnect.entities.Comment;
+import online.thinhtran.psyconnect.entities.Post;
+import online.thinhtran.psyconnect.entities.User;
 import online.thinhtran.psyconnect.repositories.CommentRepository;
 import online.thinhtran.psyconnect.responses.PageableResponse;
 import online.thinhtran.psyconnect.responses.comments.UserCommentResponse;
@@ -18,7 +22,7 @@ public class CommentService {
 
     @Transactional(readOnly = true)
     public long countByPostId(Integer postId) {
-        return commentRepository.countByPost_Id(postId);
+        return commentRepository.countByPostId(postId);
     }
 
 
@@ -30,5 +34,16 @@ public class CommentService {
                 .totalElements(comments.getTotalElements())
                 .totalPages(comments.getTotalPages())
                 .build();
+    }
+
+    @Transactional
+    public void commentPost(CommentDto commentDto, User user) {
+        Comment comment = Comment.builder()
+                .userId(user.getId())
+                .postId(commentDto.getPostId())
+                .content(commentDto.getContent())
+                .build();
+
+        commentRepository.save(comment);
     }
 }

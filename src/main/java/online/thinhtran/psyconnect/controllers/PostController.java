@@ -2,6 +2,7 @@ package online.thinhtran.psyconnect.controllers;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import online.thinhtran.psyconnect.dto.post.PostDto;
 import online.thinhtran.psyconnect.entities.Post;
 import online.thinhtran.psyconnect.entities.PostLike;
 import online.thinhtran.psyconnect.entities.User;
@@ -52,6 +53,28 @@ public class PostController {
         return ResponseEntity.ok(Response.<PostDetailResponse>builder()
                 .data(postService.getPostDetailById(postId, user.getId()))
                 .message("Post details retrieved")
+                .build());
+    }
+
+    @GetMapping("/favorites")
+    public ResponseEntity<Response<PageableResponse<PostResponse>>> getFavoritePosts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @AuthenticationPrincipal User user
+    ) {
+        return ResponseEntity.ok(Response.<PageableResponse<PostResponse>>builder()
+                .data(postService.getPostLikedByUserId(user.getId(), page, size))
+                .build());
+    }
+
+    @PostMapping()
+    public ResponseEntity<Response<PostResponse>> createPost(
+            @RequestBody PostDto postDto,
+            @AuthenticationPrincipal User user
+    ) {
+        return ResponseEntity.ok(Response.<PostResponse>builder()
+                .data(postService.createPost(postDto, user))
+                .message("Post created")
                 .build());
     }
 }

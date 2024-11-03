@@ -27,4 +27,9 @@ public class PostLikeService {
 
         postLikeRepository.save(postLike);
     }
+
+    @Transactional(readOnly = true)
+    public Boolean isUserLikePost(Integer postId, Integer userId){
+        return postLikeRepository.existsByPost_IdAndUser_Id(postId, userId);
+    }
 }

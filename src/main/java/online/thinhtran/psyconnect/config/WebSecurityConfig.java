@@ -55,7 +55,17 @@ public class WebSecurityConfig {
 
                             // login
                             String.format("%s/auth/login", apiPrefix),
-                            String.format("%s/auth/register", apiPrefix)
+                            String.format("%s/auth/register", apiPrefix),
+
+                            // chat
+                            "/socket.io/**",
+                            "/socket.io",
+                            "/chat/**",
+                            "/chat",
+                            "/user",
+                            "/user/**",
+                            "/info",
+                            "/info/**"
                     ).permitAll();
         });
 
