@@ -22,19 +22,20 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-//        registry.addEndpoint("/chat")
-//                .setAllowedOrigins("http://localhost:5000", "http://127.0.0.1:5000")
-//                .withSockJS();
+        registry.addEndpoint("/ws")
+                .setAllowedOrigins("http://localhost:5500", "http://127.0.0.1:5500")
+                .setAllowedOrigins("*");
 
-        registry.addEndpoint("/chat")
-                .setAllowedOriginPatterns("*")
-                .setAllowedOrigins("http://localhost:5000", "http://127.0.0.1:5000");
+//        registry.addEndpoint("/ws")
+//                .setAllowedOriginPatterns("*")
+//                .setAllowedOrigins("http://localhost:5500", "http://127.0.0.1:5500")
+//                .withSockJS();
     }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/topic", "/queue"); // publish
         config.setApplicationDestinationPrefixes("/app"); // subscribe
+        config.enableSimpleBroker("/chatroom", "/user"); // publish
         config.setUserDestinationPrefix("/user");
     }
 

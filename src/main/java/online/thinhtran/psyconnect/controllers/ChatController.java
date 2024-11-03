@@ -2,17 +2,13 @@ package online.thinhtran.psyconnect.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import online.thinhtran.psyconnect.dto.chat.ChatMessage;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.Header;
+import online.thinhtran.psyconnect.dto.chat.Message;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
-import java.security.Principal;
 
 @Controller
 @RequiredArgsConstructor
@@ -21,14 +17,20 @@ public class ChatController {
     private final SimpMessagingTemplate simpMessagingTemplate;
 
 
-    @MessageMapping("/sendMessage")
-    public void sendMessage(@Payload ChatMessage chatMessage) {
-        simpMessagingTemplate.convertAndSend("/topic/public", chatMessage);
+    @MessageMapping("/message")
+    @SendTo("/chatroom/public")
+    public Message receiveMessage(@Payload Message message) {
+        return message;
     }
 
-    @MessageMapping("/privateMessage")
-    public ChatMessage sendPrivateMessage(@Payload ChatMessage chatMessage) {
-        simpMessagingTemplate.convertAndSendToUser(chatMessage.getReceiver(), "/queue/privateMessage", chatMessage.getContent());
-        return chatMessage;
+    @MessageMapping("/private-message")
+    public Message recMessage(@Payload Message message) {
+        simpMessagingTemplate.convertAndSendToUser(message.getReceiverName(), "/private", message);
+
+        log.info("Message sender to: {}", message.getSenderName());
+        log.info("Message sent to: {}", message.getReceiverName());
+        log.info("Message: {}", message.getMessage());
+
+        return message;
     }
 }

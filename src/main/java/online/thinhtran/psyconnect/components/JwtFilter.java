@@ -100,17 +100,20 @@ public class JwtFilter extends OncePerRequestFilter {
                 //auth
                 Pair.of(String.format("%s/auth/login", apiPrefix), "POST"),
                 Pair.of(String.format("%s/auth/register", apiPrefix), "POST"),
+                Pair.of(String.format("%s/auth/approve/**", apiPrefix), "PUT"),
 
                 //chat
-                Pair.of("/chat", "GET"),
-                Pair.of("/chat/**", "GET"),
+                Pair.of("/ws", "GET"),
+                Pair.of("/ws/**", "GET"),
                 Pair.of("/socket.io/**", "GET"),
                 Pair.of("/user", "GET"),
                 Pair.of("/user/**", "GET"),
-                Pair.of("/info", "GET"),
+                Pair.of("/info", "GET"),    // for health check
                 Pair.of("/info/**", "GET"),
+                Pair.of("/socket.io", "GET"),
 
-                Pair.of("/socket.io", "GET")
+                //get user
+                Pair.of(String.format("%s/user", apiPrefix), "GET")
 
         );
 

@@ -84,6 +84,7 @@ public class AuthService {
         patientRepository.save(patient);
 
         return PatientRegisterResponse.builder()
+
                 .username(user.getUsername())
                 .name(patient.getName())
                 .address(patient.getAddress())

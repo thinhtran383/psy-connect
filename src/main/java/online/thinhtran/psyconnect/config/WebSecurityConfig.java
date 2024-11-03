@@ -60,8 +60,8 @@ public class WebSecurityConfig {
                             // chat
                             "/socket.io/**",
                             "/socket.io",
-                            "/chat/**",
-                            "/chat",
+                            "/ws/**",
+                            "/ws",
                             "/user",
                             "/user/**",
                             "/info",
