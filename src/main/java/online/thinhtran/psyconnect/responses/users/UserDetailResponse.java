@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class UserDetailResponse {
+    private Integer id;
     private String name;
     private String email;
     private String address;
