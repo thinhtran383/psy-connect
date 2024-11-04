@@ -42,6 +42,9 @@ public class Post {
     @Column(name = "content", nullable = false)
     private String content;
 
+    @Column(name = "thumbnail")
+    private String thumbnail;
+
     @Column(name = "created_at")
     @CreatedDate
     private LocalDateTime createdAt;
