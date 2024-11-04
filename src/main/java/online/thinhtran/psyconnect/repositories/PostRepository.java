@@ -15,7 +15,7 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
 //            "LEFT JOIN Comment c ON c.post.id = p.id " +
 //            "GROUP BY p.id")
     @Query("""
-                select p, count(pl) as likeCount, count(c) as commentCount, u.username, t.tagName
+                select p, count(pl) as likeCount, count(c) as commentCount, u.username, t.tagName, p.thumbnail, u.avatar
                 from Post p
                 left join PostLike pl on pl.post.id = p.id
                 left join Comment c on c.postId = p.id
@@ -37,7 +37,7 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     Object findAllWithLikeAndCommentsByPostId(Integer postId);
 
     @Query("""
-                select p, count(pl) as likeCount, count(c) as commentCount, u.username, t.tagName
+                select p, count(pl) as likeCount, count(c) as commentCount, u.username, t.tagName, p.thumbnail, u.avatar
                 from Post p
                 left join PostLike pl on pl.post.id = p.id
                 left join Comment c on c.postId = p.id
@@ -49,7 +49,7 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     Page<Object[]> findPostLikedByUserId(Integer userId ,Pageable pageable);
 
     @Query("""
-                select p, count(pl) as likeCount, count(c) as commentCount, u.username, t.tagName
+                select p, count(pl) as likeCount, count(c) as commentCount, u.username, t.tagName, p.thumbnail, u.avatar
                 from Post p
                 left join PostLike pl on pl.post.id = p.id
                 left join Comment c on c.postId = p.id

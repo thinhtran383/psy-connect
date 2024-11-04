@@ -67,9 +67,9 @@ public class PostController {
                 .build());
     }
 
-    @PostMapping()
+    @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<Response<PostResponse>> createPost(
-            @RequestBody PostDto postDto,
+            @ModelAttribute PostDto postDto,
             @AuthenticationPrincipal User user
     ) {
         return ResponseEntity.ok(Response.<PostResponse>builder()

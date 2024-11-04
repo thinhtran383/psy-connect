@@ -23,6 +23,6 @@ public class PostResponse {
     private Long totalComment;
     private Long totalLikes;
     private String avatar;
-    private String imagePost;
+    private String thumbnail;
 
 }

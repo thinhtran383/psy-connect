@@ -29,6 +29,7 @@ public class PostService {
     private final CommentService commentService;
     private final PostLikeService postLikeService;
     private final TagService tagService;
+    private final CloudinaryService cloudinaryService;
 
     @Transactional(readOnly = true)
     @Cacheable(value = "postCache", key = "#page")
@@ -83,31 +84,35 @@ public class PostService {
 
     @Transactional
     @CacheEvict(value = "postCache", allEntries = true)
-    public PostResponse createPost(PostDto postDto, User user){
+    public PostResponse createPost(PostDto postDto, User user) {
+        String thumbnail = cloudinaryService.upload(postDto.getImage());
+
         Post post = Post.builder()
                 .title(postDto.getTitle())
                 .content(postDto.getContent())
                 .tagId(postDto.getTagId())
                 .user(user)
+                .thumbnail(thumbnail)
                 .build();
 
         postRepository.save(post);
 
         return PostResponse.builder()
+                .id(post.getId())
                 .totalComment(0L)
                 .totalLikes(0L)
                 .author(user.getUsername())
-                .imagePost(null)
-                .avatar(null)
                 .content(post.getContent())
                 .title(post.getTitle())
+                .thumbnail(post.getThumbnail())
                 .tag(tagService.getTagById(postDto.getTagId()))
+                .createdAt(LocalDateTime.now())
                 .build();
 
 
     }
 
-    public PageableResponse<PostResponse> getOwnerPost(Integer userId){
+    public PageableResponse<PostResponse> getOwnerPost(Integer userId) {
         Page<Object[]> postOwner = postRepository.findPostCreateByUserId(userId, PageRequest.of(0, 10));
 
         List<PostResponse> postResponses = getPostResponse(postOwner).toList();
@@ -126,6 +131,8 @@ public class PostService {
             long commentCount = (long) detail[2];
             String author = (String) detail[3];
             String tag = (String) detail[4];
+            String thumbnail = (String) detail[5];
+            String avatar = (String) detail[6];
 
             return PostResponse.builder()
                     .id(post.getId())
@@ -136,6 +143,8 @@ public class PostService {
                     .createdAt(post.getCreatedAt())
                     .tag(tag)
                     .title(post.getTitle())
+                    .avatar(avatar)
+                    .thumbnail(thumbnail)
                     .build();
         });
     }
