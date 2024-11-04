@@ -28,6 +28,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
+@ToString
 public class User implements UserDetails {
     @Id
     @Column(name = "user_id", nullable = false)

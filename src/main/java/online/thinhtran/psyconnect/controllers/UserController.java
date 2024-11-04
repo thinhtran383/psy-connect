@@ -33,10 +33,10 @@ public class UserController {
     }
 
     @GetMapping("/user-detail")
-    public ResponseEntity<Response<UserDetailResponse>> getUserDetail(@RequestParam String username) {
+    public ResponseEntity<Response<UserDetailResponse>> getUserDetail(@RequestParam Integer userId) {
         return ResponseEntity.ok(
                 Response.<UserDetailResponse>builder()
-                        .data(userService.getUserDetail(username))
+                        .data(userService.getUserDetail(userId))
                         .build()
         );
     }
