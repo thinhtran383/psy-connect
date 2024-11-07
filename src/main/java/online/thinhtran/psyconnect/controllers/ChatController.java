@@ -1,36 +1,39 @@
 package online.thinhtran.psyconnect.controllers;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import online.thinhtran.psyconnect.dto.chat.Message;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
+import online.thinhtran.psyconnect.dto.chat.MessageDto;
+import online.thinhtran.psyconnect.entities.User;
+import online.thinhtran.psyconnect.responses.PageableResponse;
+import online.thinhtran.psyconnect.responses.Response;
+import online.thinhtran.psyconnect.services.ChatService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 
-@Controller
+@RestController
+@RequestMapping("${api.base-path}/chats")
 @RequiredArgsConstructor
-@Slf4j
 public class ChatController {
-    private final SimpMessagingTemplate simpMessagingTemplate;
+    private final ChatService chatService;
 
+    @GetMapping
+    public ResponseEntity<Response<PageableResponse<MessageDto>>> getMessages(
+            @AuthenticationPrincipal User user,
+            @RequestParam String receiverName,
+            @RequestParam(defaultValue = "0", required = false) int page,
+            @RequestParam(defaultValue = "10", required = false) int size
+    ) {
+        PageableResponse<MessageDto> messages = chatService.getMessage(user.getUsername(), receiverName, page, size);
 
-    @MessageMapping("/message")
-    @SendTo("/chatroom/public")
-    public Message receiveMessage(@Payload Message message) {
-        return message;
-    }
-
-    @MessageMapping("/private-message")
-    public Message recMessage(@Payload Message message) {
-        simpMessagingTemplate.convertAndSendToUser(message.getReceiverName(), "/private", message);
-
-        log.info("Message sender to: {}", message.getSenderName());
-        log.info("Message sent to: {}", message.getReceiverName());
-        log.info("Message: {}", message.getMessage());
-
-        return message;
+        return ResponseEntity.ok(Response.<PageableResponse<MessageDto>>builder()
+                .data(messages)
+                .message("Messages retrieved successfully")
+                .build());
     }
 }

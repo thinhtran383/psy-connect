@@ -32,7 +32,8 @@ public class UserService {
     private final PatientRepository patientRepository;
 
     @Transactional(readOnly = true)
-    public User getUserByUsername(String username) {
+    @Cacheable(value = "users", key = "#username")
+    public User getUserByUsername(String username)   {
         return userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
     }
 
@@ -43,7 +44,6 @@ public class UserService {
 
         List<User> content = users.getContent();
 
-        System.out.println(content);
 
         if (roleEnum != null) {
             content = content.stream()

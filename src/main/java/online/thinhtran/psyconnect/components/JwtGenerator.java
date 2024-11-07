@@ -68,15 +68,15 @@ public class JwtGenerator {
     public boolean isValidToken(String token) {
         try {
             if (isTokenExpired(token)) {
-                grantedTokenService.revokeToken(token);
+//                grantedTokenService.revokeToken(token);
                 return false;
             }
 
-            boolean isGranted = grantedTokenService.isGranted(token);
-            log.info("Token is granted: {}", isGranted);
-            if (!isGranted) {
-                return false;
-            }
+//            boolean isGranted = grantedTokenService.isGranted(token);
+//            log.info("Token is granted: {}", isGranted);
+//            if (!isGranted) {
+//                return false;
+//            }
 
         } catch (Exception e) {
             return false;

@@ -36,6 +36,7 @@ public class PostService {
     public PageableResponse<PostResponse> getAllPost(int page, int size) {
         Page<Object[]> postDetails = postRepository.findAllWithLikesAndComments(PageRequest.of(page, size));
 
+
         List<PostResponse> postResponses = getPostResponse(postDetails).collect(Collectors.toList());
 
         return PageableResponse.<PostResponse>builder()

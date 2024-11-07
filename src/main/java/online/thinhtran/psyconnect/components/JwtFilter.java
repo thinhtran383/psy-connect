@@ -29,6 +29,7 @@ public class JwtFilter extends OncePerRequestFilter {
     private final JwtGenerator jwtGenerator;
     private final UserDetailsService userDetailsService;
 
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         if (nonAuthRequest(request)) {
