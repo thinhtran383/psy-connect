@@ -1,15 +1,17 @@
-package online.thinhtran.psyconnect.dto.chat;
+package online.thinhtran.psyconnect.responses.message;
 
 import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 @Builder
-public class Message {
+public class MessageResponse {
     private String senderName;
     private String receiverName;
     private String message;
+    private LocalDateTime timestamp;
 }
