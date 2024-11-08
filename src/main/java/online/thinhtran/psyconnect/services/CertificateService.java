@@ -6,7 +6,6 @@ import online.thinhtran.psyconnect.dto.certificate.CertificateUploadDto;
 import online.thinhtran.psyconnect.entities.Certificate;
 import online.thinhtran.psyconnect.repositories.CertificateRepository;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.util.Pair;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,46 +22,26 @@ public class CertificateService {
     private final CertificateRepository certificateRepository;
     private final CloudinaryService cloudinaryService;
 
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
-
     @Transactional
+    @Async
     public void uploadCertificate(CertificateUploadDto certificateUploadDto, Integer userId) {
-        List<Pair<Certificate, MultipartFile>> certificatePairs = certificateUploadDto.getImages().stream()
-                .map(image -> {
-                    Certificate certificate = new Certificate();
-                    certificate.setUserId(userId);
-                    certificate.setCertificateName(certificateUploadDto.getName());
-                    certificateRepository.save(certificate);
-                    return Pair.of(certificate, image);
-                })
-                .toList();
+        for (MultipartFile file : certificateUploadDto.getImages()) {
+            try {
+                byte[] fileData = file.getBytes();
+                String imageUrl = cloudinaryService.upload(fileData);
 
-        System.out.println("Submitting background task to upload images.");
-
-        executorService.submit(() -> {
-            certificatePairs.forEach(pair -> {
-                try {
-                    System.out.println("Uploading image for certificate ID: " + pair.getFirst().getId());
-                    String imageUrl = cloudinaryService.upload(pair.getSecond()); // Upload từng ảnh
-                    pair.getFirst().setCertificateImage(imageUrl);
-                    certificateRepository.save(pair.getFirst()); // Lưu từng ảnh vào CSDL
-                    System.out.println("Upload successful for certificate ID: " + pair.getFirst().getId());
-                } catch (Exception e) {
-                    System.err.println("Error uploading image for certificate ID: " + pair.getFirst().getId() + ": " + e.getMessage());
-                }
-            });
-            System.out.println("All images uploaded and certificates updated.");
-        });
-
-
-        System.out.println("Background task submitted successfully.");
+                Certificate certificate = new Certificate();
+                certificate.setUserId(userId);
+                certificate.setCertificateImage(imageUrl);
+                certificate.setCertificateName(certificateUploadDto.getName());
+                certificateRepository.save(certificate);
+            } catch (Exception e) {
+                System.err.println("Failed to upload image for user " + userId);
+            }
+        }
     }
 
-    @PreDestroy
-    public void shutDownExecutorService() {
-        executorService.shutdown();
-        System.out.println("Executor service shut down.");
-    }
+
 
     @Transactional(readOnly = true)
     public List<String> getCertificateImages(Integer userId) {

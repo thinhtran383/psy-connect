@@ -17,6 +17,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping("${api.base-path}/posts")
 @RequiredArgsConstructor
@@ -83,7 +85,7 @@ public class PostController {
     public ResponseEntity<Response<PostResponse>> createPost(
             @ModelAttribute PostDto postDto,
             @AuthenticationPrincipal User user
-    ) {
+    ) throws IOException {
         return ResponseEntity.ok(Response.<PostResponse>builder()
                 .data(postService.createPost(postDto, user))
                 .message("Post created")

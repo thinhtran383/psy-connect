@@ -14,16 +14,16 @@ import java.util.Objects;
 public class CloudinaryService {
     private final Cloudinary cloudinary;
 
-    public String upload(MultipartFile file) {
+    public String upload(byte[] fileData) {
         try {
-            System.out.println("Uploading file: " + file.getOriginalFilename());
-            Map<String, Object> data = cloudinary.uploader().upload(file.getBytes(), Map.of());
+            System.out.println("Uploading file...");
+            Map<String, Object> data = cloudinary.uploader().upload(fileData, Map.of());
             String url = (String) data.get("secure_url");
             System.out.println("Upload successful. URL: " + url);
             return url;
         } catch (IOException io) {
-            System.err.println("Error uploading file: " + file.getOriginalFilename());
-            throw new RuntimeException("Image upload fail");
+            io.printStackTrace();
+            throw new RuntimeException("Image upload failed: " + io.getMessage());
         }
     }
 }

@@ -25,7 +25,6 @@ public class CertificateController {
             @ModelAttribute CertificateUploadDto certificateUploadDto,
             @AuthenticationPrincipal User user
     ) {
-
         certificateService.uploadCertificate(certificateUploadDto, user.getId());
         return ResponseEntity.ok(Response.builder()
                 .message("Certificate uploaded successfully")

@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -85,8 +86,10 @@ public class PostService {
 
     @Transactional
     @CacheEvict(value = "postCache", allEntries = true)
-    public PostResponse createPost(PostDto postDto, User user) {
-        String thumbnail = cloudinaryService.upload(postDto.getImage());
+    public PostResponse createPost(PostDto postDto, User user) throws IOException {
+        byte[] image = postDto.getImage().getBytes();
+
+        String thumbnail = cloudinaryService.upload(image);
 
         Post post = Post.builder()
                 .title(postDto.getTitle())
