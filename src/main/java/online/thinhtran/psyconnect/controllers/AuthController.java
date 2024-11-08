@@ -40,4 +40,14 @@ public class AuthController {
                 .build());
     }
 
+
+    @PostMapping("/admin/login")
+    public ResponseEntity<Response<LoginResponse>> adminLogin(@RequestBody LoginDto loginDto) {
+        return ResponseEntity.ok(Response.<LoginResponse>builder()
+                .data(authService.adminLogin(loginDto))
+                .message("Login successfully")
+                .build());
+    }
+
+
 }

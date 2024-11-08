@@ -46,4 +46,9 @@ public class CommentService {
 
         commentRepository.save(comment);
     }
+
+    @Transactional
+    protected void deleteCommentsByPostId(Integer postId) {
+        commentRepository.deleteCommentsByPostId(postId);
+    }
 }

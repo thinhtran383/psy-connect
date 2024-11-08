@@ -13,6 +13,7 @@ import online.thinhtran.psyconnect.responses.post.PostResponse;
 import online.thinhtran.psyconnect.services.PostLikeService;
 import online.thinhtran.psyconnect.services.PostService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,6 +43,17 @@ public class PostController {
         postLikeService.likePost(postId, user.getId());
         return ResponseEntity.ok(Response.builder()
                 .message("Post liked")
+                .build());
+    }
+
+    @PutMapping("/unlike/{postId}")
+    public ResponseEntity<Response<?>> unlike(
+            @PathVariable Integer postId,
+            @AuthenticationPrincipal User user
+    ) {
+        postLikeService.unLikePost(postId, user.getId());
+        return ResponseEntity.ok(Response.builder()
+                .message("Post unliked")
                 .build());
     }
 
@@ -77,4 +89,28 @@ public class PostController {
                 .message("Post created")
                 .build());
     }
+
+    @GetMapping("/user")
+    public ResponseEntity<Response<PageableResponse<PostResponse>>> getOwnPosts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @AuthenticationPrincipal User user
+    ) {
+        return ResponseEntity.ok(Response.<PageableResponse<PostResponse>>builder()
+                .data(postService.getOwnerPost(user.getId(), page, size))
+                .build());
+    }
+
+    @DeleteMapping("/{postId}")
+//    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Response<?>> deletePost(
+            @PathVariable Integer postId
+    ) {
+        postService.deletePost(postId);
+        return ResponseEntity.ok(Response.builder()
+                .message("Post deleted")
+                .build());
+    }
+
+
 }

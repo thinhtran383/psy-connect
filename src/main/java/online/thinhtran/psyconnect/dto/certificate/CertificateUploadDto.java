@@ -14,5 +14,4 @@ import java.util.List;
 public class CertificateUploadDto {
     private List<MultipartFile> images;
     private String name;
-    private Integer userId;
 }

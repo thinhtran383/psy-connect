@@ -6,6 +6,7 @@ import online.thinhtran.psyconnect.dto.chat.MessageDto;
 import online.thinhtran.psyconnect.entities.User;
 import online.thinhtran.psyconnect.responses.PageableResponse;
 import online.thinhtran.psyconnect.responses.Response;
+import online.thinhtran.psyconnect.responses.chat.ChatCategoriesResponse;
 import online.thinhtran.psyconnect.services.ChatService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -34,6 +35,18 @@ public class ChatController {
         return ResponseEntity.ok(Response.<PageableResponse<MessageDto>>builder()
                 .data(messages)
                 .message("Messages retrieved successfully")
+                .build());
+    }
+
+    @GetMapping("/categories")
+    public ResponseEntity<Response<List<ChatCategoriesResponse>>> getChatCategories(
+            @AuthenticationPrincipal User user
+    ) {
+        List<ChatCategoriesResponse> chatCategories = chatService.getChatCategories(user.getUsername());
+
+        return ResponseEntity.ok(Response.<List<ChatCategoriesResponse>>builder()
+                .data(chatCategories)
+                .message("Chat categories retrieved successfully")
                 .build());
     }
 }

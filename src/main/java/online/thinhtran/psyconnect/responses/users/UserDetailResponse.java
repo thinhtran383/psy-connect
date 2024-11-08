@@ -8,6 +8,7 @@ import online.thinhtran.psyconnect.entities.User;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -30,6 +31,8 @@ public class UserDetailResponse {
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastModifiedDate;
+
+    private List<String> certificates;
 
 
 }

@@ -14,12 +14,12 @@ public class PostLikeService {
     private final PostLikeRepository postLikeRepository;
 
     @Transactional(readOnly = true)
-    public long countByPostId(Integer postId){
+    public long countByPostId(Integer postId) {
         return postLikeRepository.countByPost_Id(postId);
     }
 
     @Transactional
-    public void likePost(Integer postId, Integer userId){
+    public void likePost(Integer postId, Integer userId) {
         PostLike postLike = PostLike.builder()
                 .post(Post.builder().id(postId).build())
                 .user(User.builder().id(userId).build())
@@ -28,8 +28,18 @@ public class PostLikeService {
         postLikeRepository.save(postLike);
     }
 
+    @Transactional
+    public void unLikePost(Integer postId, Integer userId) {
+        postLikeRepository.deleteByPost_IdAndUser_Id(postId, userId);
+    }
+
     @Transactional(readOnly = true)
-    public Boolean isUserLikePost(Integer postId, Integer userId){
+    public Boolean isUserLikePost(Integer postId, Integer userId) {
         return postLikeRepository.existsByPost_IdAndUser_Id(postId, userId);
+    }
+
+    @Transactional
+    protected void deleteByPostId(Integer postId) {
+        postLikeRepository.deleteByPostId(postId);
     }
 }

@@ -140,26 +140,12 @@ public class AuthService {
 
     }
 
-
     @Transactional(readOnly = true)
     public LoginResponse login(LoginDto loginDto) {
         User user = userRepository.findByUsername(loginDto.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (!passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
-            throw new BadCredentialsException("Invalid password");
-        }
-
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                loginDto.getUsername(),
-                loginDto.getPassword(),
-                user.getAuthorities()
-        );
-
-        authenticationManager.authenticate(authenticationToken);
-
-        String jwtToken = jwtGenerator.generateToken(user);
-        grantedTokenService.grantToken(jwtToken);
+        String jwtToken = authenticateUser(loginDto, user);
 
         if (loginDto.getRole().equalsIgnoreCase(RoleEnum.DOCTOR.name())) {
             Doctor doctor = doctorRepository.findByUser_Username(user.getUsername()).orElseThrow();
@@ -187,6 +173,45 @@ public class AuthService {
                     .role(user.getRole().name())
                     .build();
         }
+    }
+
+
+    @Transactional
+    public LoginResponse adminLogin(LoginDto loginDto) {
+        User user = userRepository.findByUsername(loginDto.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (user.getRole() != RoleEnum.ADMIN) {
+            throw new BadCredentialsException("Invalid request");
+        }
+
+        String jwtToken = authenticateUser(loginDto, user);
+
+        return LoginResponse.builder()
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .token(jwtToken)
+                .role(user.getRole().name())
+                .build();
+    }
+
+    private String authenticateUser(LoginDto loginDto, User user) {
+        if (!passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
+            throw new BadCredentialsException("Invalid password");
+        }
+
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                loginDto.getUsername(),
+                loginDto.getPassword(),
+                user.getAuthorities()
+        );
+
+        authenticationManager.authenticate(authenticationToken);
+
+        String jwtToken = jwtGenerator.generateToken(user);
+        grantedTokenService.grantToken(jwtToken);
+
+        return jwtToken;
     }
 
     @Transactional

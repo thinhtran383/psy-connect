@@ -32,7 +32,7 @@ public class PostService {
     private final CloudinaryService cloudinaryService;
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "postCache", key = "#page")
+    @Cacheable(value = "postCache", key = "#page + '_' + #page + '_' + #size")
     public PageableResponse<PostResponse> getAllPost(int page, int size) {
         Page<Object[]> postDetails = postRepository.findAllWithLikesAndComments(PageRequest.of(page, size));
 
@@ -113,8 +113,11 @@ public class PostService {
 
     }
 
-    public PageableResponse<PostResponse> getOwnerPost(Integer userId) {
-        Page<Object[]> postOwner = postRepository.findPostCreateByUserId(userId, PageRequest.of(0, 10));
+
+    @Transactional(readOnly = true)
+    @Cacheable(value = "postCache", key = "#userId + '_' + #page + '_' + #size")
+    public PageableResponse<PostResponse> getOwnerPost(Integer userId, int page, int size) {
+        Page<Object[]> postOwner = postRepository.findPostCreateByUserId(userId, PageRequest.of(page, size));
 
         List<PostResponse> postResponses = getPostResponse(postOwner).toList();
 
@@ -148,6 +151,14 @@ public class PostService {
                     .thumbnail(thumbnail)
                     .build();
         });
+    }
+
+    @Transactional
+    @CacheEvict(value = "postCache", allEntries = true)
+    public void deletePost(Integer postId) {
+        commentService.deleteCommentsByPostId(postId);
+        postLikeService.deleteByPostId(postId);
+        postRepository.deletePostById(postId);
     }
 
 }

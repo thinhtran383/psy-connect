@@ -30,39 +30,30 @@ public class UserService {
     private final ModelMapper modelMapper;
     private final DoctorRepository doctorRepository;
     private final PatientRepository patientRepository;
+    private final CertificateService certificateService;
 
     @Transactional(readOnly = true)
     @Cacheable(value = "users", key = "#username")
-    public User getUserByUsername(String username)   {
+    public User getUserByUsername(String username) {
         return userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     @Transactional(readOnly = true)
     @Cacheable(value = "users", key = "#page + '_' + #size + '_' + #roleEnum")
     public PageableResponse<UserResponse> getAllUsers(int page, int size, RoleEnum roleEnum) {
-        Page<User> users = userRepository.findAll(PageRequest.of(page, size));
-
-        List<User> content = users.getContent();
-
-
+        Page<User> users;
         if (roleEnum != null) {
-            content = content.stream()
-                    .filter(user -> user.getRole().equals(roleEnum))
-                    .toList();
+            users = userRepository.findAllByRole(roleEnum, PageRequest.of(page, size));
+        } else {
+            users = userRepository.findAll(PageRequest.of(page, size));
         }
 
-        // calculate total pages and total elements
-        int totalElements = content.size();
-        int totalPages = (totalElements + size - 1) / size;
-
         return PageableResponse.<UserResponse>builder()
-                .elements(content.stream()
-                        .map(user ->
-                                modelMapper.map(user, UserResponse.class)
-                        )
+                .elements(users.stream()
+                        .map(user -> modelMapper.map(user, UserResponse.class))
                         .collect(Collectors.toList()))
-                .totalElements(totalElements)
-                .totalPages(totalPages)
+                .totalElements(users.getTotalElements())
+                .totalPages(users.getTotalPages())
                 .build();
     }
 
@@ -84,6 +75,7 @@ public class UserService {
                     .role(user.getRole().name())
                     .createdDate(user.getCreatedAt())
                     .lastModifiedDate(user.getUpdatedAt())
+                    .certificates(certificateService.getCertificateImages(user.getId()))
                     .build();
         }
 

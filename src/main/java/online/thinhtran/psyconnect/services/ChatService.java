@@ -8,12 +8,15 @@ import online.thinhtran.psyconnect.entities.User;
 import online.thinhtran.psyconnect.repositories.MessageRepository;
 import online.thinhtran.psyconnect.repositories.UserRepository;
 import online.thinhtran.psyconnect.responses.PageableResponse;
+import online.thinhtran.psyconnect.responses.chat.ChatCategoriesResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -26,6 +29,7 @@ public class ChatService {
     private final MessageRepository messageRepository;
     private final RedisTemplate<String, MessageDto> redisTemplate;
     private final UserRepository userRepository;
+
 
     public void saveMessageToRedis(MessageDto message) {
         String key = String.format("messages:%s-%s", message.getSenderName(), message.getReceiverName());
@@ -83,12 +87,11 @@ public class ChatService {
 //                .build();
 //    }
 
-    //    @Scheduled(fixedRate = 3600000)
+    @Scheduled(fixedRate = 3600000)
     public void syncMessagesFromRedisToDb() {
         Set<String> keys = redisTemplate.keys("messages:*");
         if (keys != null) {
             List<MessageDto> allMessages = new ArrayList<>();
-
 
             keys.forEach(key -> {
                 List<MessageDto> messages = redisTemplate.opsForList().range(key, 0, -1);
@@ -117,6 +120,7 @@ public class ChatService {
                     message.setSender(sender);
                     message.setReceiver(receiver);
                     message.setContent(messageDto.getMessage());
+                    message.setTimestamp(messageDto.getTimestamp());
                     messagesToSave.add(message);
                 }
             });
@@ -126,5 +130,39 @@ public class ChatService {
 
         log.info("Sync messages from Redis to DB");
     }
+
+    @Transactional(readOnly = true)
+    public List<ChatCategoriesResponse> getChatCategories(String currentUsername) { // todo
+        List<ChatCategoriesResponse> chatList = new ArrayList<>();
+
+        // Redis pattern to get all conversations involving the current user
+        Set<String> chatKeys = redisTemplate.keys("messages:" + currentUsername + "-*");
+
+        if (chatKeys != null) {
+            for (String key : chatKeys) {
+                // Retrieve the last message in each conversation from Redis
+                MessageDto lastMessage = redisTemplate.opsForList().index(key, -1);
+
+                // Extract the receiver's username from the key
+                String[] participants = key.split(":")[1].split("-");
+                String otherUsername = participants[0].equals(currentUsername) ? participants[1] : participants[0];
+
+                // Retrieve the full name of the other participant
+                Optional<User> otherUserOpt = userRepository.findByUsername(otherUsername);
+                otherUserOpt.ifPresent(otherUser -> {
+                    chatList.add(ChatCategoriesResponse.builder()
+                            .username(otherUser.getUsername())
+                            .lastMessage(lastMessage.getMessage())
+                            .lastMessageTime(lastMessage.getTimestamp())
+                            .build());
+                });
+            }
+        }
+
+
+
+        return chatList;
+    }
+
 
 }
