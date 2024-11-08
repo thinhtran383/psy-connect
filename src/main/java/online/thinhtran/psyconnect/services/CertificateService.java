@@ -25,7 +25,7 @@ public class CertificateService {
     @Transactional
     @Async
     public void uploadCertificate(CertificateUploadDto certificateUploadDto, Integer userId) {
-        for (MultipartFile file : certificateUploadDto.getImages()) {
+        certificateUploadDto.getImages().forEach(file -> {
             try {
                 byte[] fileData = file.getBytes();
                 String imageUrl = cloudinaryService.upload(fileData);
@@ -38,9 +38,8 @@ public class CertificateService {
             } catch (Exception e) {
                 System.err.println("Failed to upload image for user " + userId);
             }
-        }
+        });
     }
-
 
 
     @Transactional(readOnly = true)
