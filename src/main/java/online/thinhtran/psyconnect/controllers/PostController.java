@@ -100,10 +100,11 @@ public class PostController {
     ) {
         return ResponseEntity.ok(Response.<PageableResponse<PostResponse>>builder()
                 .data(postService.getOwnerPost(user.getId(), page, size))
+                .message("Own posts retrieved")
                 .build());
     }
 
-    @DeleteMapping("/{postId}")
+    @DeleteMapping("/admin/{postId}")
 //    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Response<?>> deletePost(
             @PathVariable Integer postId
@@ -111,6 +112,19 @@ public class PostController {
         postService.deletePost(postId);
         return ResponseEntity.ok(Response.builder()
                 .message("Post deleted")
+                .data(true)
+                .build());
+    }
+
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<Response<?>> deleteOwnPost(
+            @PathVariable Integer postId,
+            @AuthenticationPrincipal User user
+    ) {
+        postService.deleteOwnPost(postId, user.getId());
+        return ResponseEntity.ok(Response.builder()
+                .message("Post deleted")
+                .data(true)
                 .build());
     }
 

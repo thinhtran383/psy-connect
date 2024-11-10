@@ -164,4 +164,11 @@ public class PostService {
         postRepository.deletePostById(postId);
     }
 
+    @Transactional
+    @CacheEvict(value = "postCache", allEntries = true)
+    public void deleteOwnPost(Integer postId, Integer id) {
+        commentService.deleteCommentsByPostId(postId);
+        postLikeService.deleteByPostId(postId);
+        postRepository.deletePostByIdAndUserId(postId, id);
+    }
 }
