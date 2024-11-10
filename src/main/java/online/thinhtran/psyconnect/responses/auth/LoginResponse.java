@@ -11,6 +11,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class LoginResponse {
+    private Integer id;
     private String username;
     private String name;
     private String email;
