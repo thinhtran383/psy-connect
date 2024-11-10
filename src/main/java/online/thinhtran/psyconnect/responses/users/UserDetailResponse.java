@@ -2,6 +2,7 @@ package online.thinhtran.psyconnect.responses.users;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import online.thinhtran.psyconnect.entities.Doctor;
 import online.thinhtran.psyconnect.entities.Patient;
 import online.thinhtran.psyconnect.entities.User;
@@ -14,7 +15,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@SuperBuilder
 public class UserDetailResponse {
     private Integer id;
     private String name;
@@ -23,7 +24,7 @@ public class UserDetailResponse {
     private String phone;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dob;
-    private String specialization;
+//    private String specialization;
     private String role;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -32,7 +33,7 @@ public class UserDetailResponse {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastModifiedDate;
 
-    private List<String> certificates;
+//    private List<String> certificates;
 
 
 }

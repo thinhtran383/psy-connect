@@ -12,6 +12,8 @@ import online.thinhtran.psyconnect.repositories.UserRepository;
 import online.thinhtran.psyconnect.responses.PageableResponse;
 import online.thinhtran.psyconnect.responses.users.UserDetailResponse;
 import online.thinhtran.psyconnect.responses.users.UserResponse;
+import online.thinhtran.psyconnect.responses.users.doctor.DoctorDetailResponse;
+import online.thinhtran.psyconnect.responses.users.patient.PatientDetailResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -65,13 +67,14 @@ public class UserService {
         Patient patient = patientRepository.findByUser_Id(userId).orElse(null);
 
         if (doctor != null) {
-            return UserDetailResponse.builder()
+            return DoctorDetailResponse.builder()
                     .id(user.getId())
                     .name(doctor.getName())
                     .email(user.getEmail())
                     .phone(doctor.getPhone())
                     .dob(doctor.getDob())
                     .specialization(doctor.getSpecialization())
+                    .address(doctor.getAddress())
                     .role(user.getRole().name())
                     .createdDate(user.getCreatedAt())
                     .lastModifiedDate(user.getUpdatedAt())
@@ -80,12 +83,14 @@ public class UserService {
         }
 
         if (patient != null) {
-            return UserDetailResponse.builder()
+            return PatientDetailResponse.builder()
+                    .id(user.getId())
                     .name(patient.getName())
                     .email(user.getEmail())
                     .phone(patient.getPhone())
                     .dob(patient.getDob())
                     .role(user.getRole().name())
+                    .address(patient.getAddress())
                     .createdDate(user.getCreatedAt())
                     .lastModifiedDate(user.getUpdatedAt())
                     .build();
