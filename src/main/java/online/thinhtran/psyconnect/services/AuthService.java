@@ -1,12 +1,15 @@
 package online.thinhtran.psyconnect.services;
 
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import online.thinhtran.psyconnect.common.RoleEnum;
 import online.thinhtran.psyconnect.common.StatusEnum;
 import online.thinhtran.psyconnect.components.JwtGenerator;
+import online.thinhtran.psyconnect.dto.auth.ChangePasswordDto;
 import online.thinhtran.psyconnect.dto.auth.LoginDto;
 import online.thinhtran.psyconnect.dto.auth.RegisterDto;
+import online.thinhtran.psyconnect.dto.mail.MailDto;
 import online.thinhtran.psyconnect.entities.Doctor;
 import online.thinhtran.psyconnect.entities.Patient;
 import online.thinhtran.psyconnect.entities.User;
@@ -26,6 +29,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.util.UUID;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -37,6 +43,7 @@ public class AuthService {
     private final PatientRepository patientRepository;
     private final JwtGenerator jwtGenerator;
     private final GrantedTokenService grantedTokenService;
+    private final MailService mailService;
 
     @Transactional
     @CacheEvict(value = "users", allEntries = true)
@@ -227,5 +234,32 @@ public class AuthService {
         } else {
             throw new RuntimeException("Invalid request");
         }
+    }
+
+    @Transactional
+    @CacheEvict(value = "users", allEntries = true) //todo: just update cache for user
+    public void changePassword(User user, ChangePasswordDto changePasswordDto) {
+        log.info("Change pass dto: {}", changePasswordDto);
+
+        if (!passwordEncoder.matches(changePasswordDto.getCurrentPassword(), user.getPassword())) {
+            throw new BadCredentialsException("Invalid password");
+        }
+
+        user.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
+        userRepository.save(user);
+    }
+
+    @Transactional
+    @CacheEvict(value = "users", allEntries = true)
+    public void forgotPassword(MailDto mailDto) throws MessagingException, IOException {
+        mailDto.setContent(UUID.randomUUID().toString().substring(0, 8));
+        mailDto.setSubject("Change password");
+
+        User user = userRepository.findByEmail(mailDto.getTo())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setPassword(passwordEncoder.encode(mailDto.getContent()));
+
+        mailService.sendMail(mailDto);
     }
 }
