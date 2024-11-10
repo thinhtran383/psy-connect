@@ -28,4 +28,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
 
     Page<User> findAllByRole(RoleEnum roleEnum, Pageable pageable);
+
+//    @Query("SELECT u FROM User u WHERE u.role <> :roleEnum")
+    Page<User> findAllByRoleNot(RoleEnum roleEnum, Pageable of);
 }
