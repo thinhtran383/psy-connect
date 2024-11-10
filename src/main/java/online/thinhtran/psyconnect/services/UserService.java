@@ -47,7 +47,7 @@ public class UserService {
         if (roleEnum != null) {
             users = userRepository.findAllByRole(roleEnum, PageRequest.of(page, size));
         } else {
-            users = userRepository.findAll(PageRequest.of(page, size));
+            users = userRepository.findAllByRoleNot(RoleEnum.ADMIN, PageRequest.of(page, size));
         }
 
         return PageableResponse.<UserResponse>builder()
@@ -68,7 +68,9 @@ public class UserService {
 
         if (doctor != null) {
             return DoctorDetailResponse.builder()
-                    .id(user.getId())
+                    .id(doctor.getId())
+                    .about(doctor.getAbout())
+                    .degree(doctor.getDegree())
                     .name(doctor.getName())
                     .email(user.getEmail())
                     .phone(doctor.getPhone())
@@ -77,14 +79,16 @@ public class UserService {
                     .address(doctor.getAddress())
                     .role(user.getRole().name())
                     .createdDate(user.getCreatedAt())
+                    .avgRating(doctor.getRating())
                     .lastModifiedDate(user.getUpdatedAt())
+                    .experience(doctor.getExperienceYears())
                     .certificates(certificateService.getCertificateImages(user.getId()))
                     .build();
         }
 
         if (patient != null) {
             return PatientDetailResponse.builder()
-                    .id(user.getId())
+                    .id(patient.getId())
                     .name(patient.getName())
                     .email(user.getEmail())
                     .phone(patient.getPhone())
