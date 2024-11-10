@@ -11,10 +11,7 @@ import online.thinhtran.psyconnect.services.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("${api.base-path}/users")
@@ -36,8 +33,8 @@ public class UserController {
         );
     }
 
-    @GetMapping("/user-detail")
-    public ResponseEntity<Response<UserDetailResponse>> getUserDetail(@RequestParam Integer userId) {
+    @GetMapping("/{userId}")
+    public ResponseEntity<Response<UserDetailResponse>> getUserDetail(@PathVariable Integer userId) {
         return ResponseEntity.ok(
                 Response.<UserDetailResponse>builder()
                         .data(userService.getUserDetail(userId))
