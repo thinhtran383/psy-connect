@@ -2,11 +2,12 @@ package online.thinhtran.psyconnect.controllers;
 
 import lombok.RequiredArgsConstructor;
 import online.thinhtran.psyconnect.dto.comments.CommentDto;
+import online.thinhtran.psyconnect.dto.rating.UserRatingDto;
 import online.thinhtran.psyconnect.entities.User;
 import online.thinhtran.psyconnect.responses.PageableResponse;
 import online.thinhtran.psyconnect.responses.Response;
 import online.thinhtran.psyconnect.responses.comments.UserCommentResponse;
-import online.thinhtran.psyconnect.responses.rating.UserRating;
+import online.thinhtran.psyconnect.responses.rating.UserRatingResponse;
 import online.thinhtran.psyconnect.services.CommentService;
 import online.thinhtran.psyconnect.services.UserRatingService;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class CommentController {
     private final UserRatingService userRatingService;
 
 
-    @GetMapping("/details/{postId}")
+    @GetMapping("/{postId}")
     public ResponseEntity<Response<PageableResponse<UserCommentResponse>>> getCommentByPostId(
             @PathVariable Integer postId,
             @RequestParam(defaultValue = "0") int page,
@@ -34,12 +35,12 @@ public class CommentController {
     }
 
     @GetMapping("/rating/{doctorId}")
-    public ResponseEntity<Response<PageableResponse<UserRating>>> getRatingAndReviewByDoctorId(
+    public ResponseEntity<Response<PageableResponse<UserRatingResponse>>> getRatingAndReviewByDoctorId(
             @PathVariable Integer doctorId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        return ResponseEntity.ok(Response.<PageableResponse<UserRating>>builder()
+        return ResponseEntity.ok(Response.<PageableResponse<UserRatingResponse>>builder()
                 .data(userRatingService.getAllRatingByDoctorId(doctorId, page, size))
                 .message("Ratings fetched successfully")
                 .build());
@@ -55,5 +56,19 @@ public class CommentController {
         return ResponseEntity.ok(Response.builder()
                 .message("Comment added")
                 .build());
+    }
+
+    @PostMapping("/rating")
+    public ResponseEntity<Response<?>> addRating(
+            @RequestBody UserRatingDto userRatingDto,
+            @AuthenticationPrincipal User user
+    ) {
+        userRatingService.rating(user, userRatingDto);
+
+        return ResponseEntity.ok(Response.builder()
+                .message("Rating added")
+                .data(true)
+                .build()
+        );
     }
 }
