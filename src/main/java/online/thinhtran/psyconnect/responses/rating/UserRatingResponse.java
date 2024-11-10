@@ -1,6 +1,5 @@
 package online.thinhtran.psyconnect.responses.rating;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter
@@ -8,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserRating {
+public class UserRatingResponse {
     private String username;
     private String fullName;
     private String content;

@@ -99,8 +99,13 @@ public class JwtFilter extends OncePerRequestFilter {
                 Pair.of("/swagger-ui/index.html", "GET"),
 
                 //auth
-                Pair.of(String.format("%s/auth/**", apiPrefix), "POST"),
-                Pair.of(String.format("%s/auth/approve/**", apiPrefix), "PUT"),
+                Pair.of(String.format("%s/auth/login", apiPrefix), "POST"),
+                Pair.of(String.format("%s/auth/register", apiPrefix), "POST"),
+                Pair.of(String.format("%s/auth/admin/login", apiPrefix), "POST"),
+
+
+
+//                Pair.of(String.format("%s/auth/approve/**", apiPrefix), "PUT"),
 
                 //chat
                 Pair.of("/ws", "GET"),

@@ -31,4 +31,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
 //    @Query("SELECT u FROM User u WHERE u.role <> :roleEnum")
     Page<User> findAllByRoleNot(RoleEnum roleEnum, Pageable of);
+
+   Optional<User> findByEmail(String email);
 }

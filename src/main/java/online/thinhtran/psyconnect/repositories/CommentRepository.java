@@ -15,11 +15,13 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
     long countByPostId(Integer postId);
 
     @Query("""
-         select new online.thinhtran.psyconnect.responses.comments.UserCommentResponse(u.username,c.content)
-         from Comment c
-         join User u on c.userId = u.id
-         where c.postId = :postId
-""")
+                     select new online.thinhtran.psyconnect.responses.comments.UserCommentResponse(COALESCE(d.name, p.name),u.username,c.content)
+                     from Comment c
+                     join User u on c.userId = u.id
+                     left join Doctor d on u.id = d.user.id
+                     left join Patient p on u.id = p.user.id
+                     where c.postId = :postId
+            """)
     Page<UserCommentResponse> findAllByPostId(Integer postId, Pageable pageable);
 
 

@@ -103,5 +103,13 @@ public class UserService {
         return null;
     }
 
+    @Transactional
+    public void updateRating(Integer userId, Float rating) {
+        Doctor doctor = doctorRepository.findById(userId).orElseThrow(() -> new RuntimeException("Doctor not found"));
+        doctor.setRating(rating);
+
+        doctorRepository.save(doctor);
+    }
+
 
 }

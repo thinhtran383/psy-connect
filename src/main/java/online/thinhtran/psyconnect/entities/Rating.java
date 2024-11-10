@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 
@@ -12,8 +14,10 @@ import java.time.Instant;
 @Setter
 @Entity
 @Table(name = "Ratings", schema = "psy")
+@EntityListeners(AuditingEntityListener.class)
 public class Rating {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "rating_id", nullable = false)
     private Integer id;
 
@@ -35,6 +39,7 @@ public class Rating {
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "created_at")
+    @CreatedDate
     private Instant createdAt;
 
 }
