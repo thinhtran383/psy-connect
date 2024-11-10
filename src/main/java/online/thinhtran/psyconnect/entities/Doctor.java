@@ -56,6 +56,12 @@ public class Doctor {
     @Column(name = "experience_years", nullable = false)
     private Integer experienceYears;
 
+    @Column(name = "degree")
+    private String degree;
+
+    @Column(name = "about")
+    private String about;
+
     @Column(name = "rating")
     private Float rating;
 
