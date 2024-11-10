@@ -27,6 +27,8 @@ public class UserDetailResponse {
 //    private String specialization;
     private String role;
 
+    private String avatar;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdDate;
 
