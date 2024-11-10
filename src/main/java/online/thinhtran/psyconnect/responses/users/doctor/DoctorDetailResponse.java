@@ -16,5 +16,6 @@ public class DoctorDetailResponse extends UserDetailResponse {
     private String specialization;
     private String about;
     private String degree;
-    private Float rating;
+    private Float avgRating;
+    private Integer experience;
 }
