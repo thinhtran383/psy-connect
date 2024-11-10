@@ -150,6 +150,7 @@ public class AuthService {
         if (loginDto.getRole().equalsIgnoreCase(RoleEnum.DOCTOR.name())) {
             Doctor doctor = doctorRepository.findByUser_Username(user.getUsername()).orElseThrow();
             return LoginResponse.builder()
+                    .id(doctor.getId())
                     .username(user.getUsername())
                     .name(doctor.getName())
                     .email(user.getEmail())
@@ -163,6 +164,7 @@ public class AuthService {
         } else {
             Patient patient = patientRepository.findByUser_Username(user.getUsername()).orElseThrow();
             return LoginResponse.builder()
+                    .id(patient.getId())
                     .username(user.getUsername())
                     .name(patient.getName())
                     .email(user.getEmail())
