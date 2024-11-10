@@ -26,15 +26,20 @@ public class QuizService {
     @Cacheable(value = "quiz")
     public List<QuizResponse> getQuiz() {
         List<Quiz> quizzes = quizRepository.findAll();
-        return quizzes.stream()
-                .map(quiz -> QuizResponse.builder()
-                        .id(quiz.getId())
-                        .question(quiz.getQuestion())
-                        .choice(Arrays.asList(quiz.getOption1(), quiz.getOption2(), quiz.getOption3(), quiz.getOption4()))
-                        .build())
-                .toList();
+        List<QuizResponse> quizResponses = new ArrayList<>();
 
+        quizzes.forEach(quiz -> {
+            QuizResponse response = QuizResponse.builder()
+                    .id(quiz.getId())
+                    .question(quiz.getQuestion())
+                    .choice(Arrays.asList(quiz.getOption1(), quiz.getOption2(), quiz.getOption3(), quiz.getOption4()))
+                    .build();
+            quizResponses.add(response);
+        });
+
+        return quizResponses;
     }
+
 
     @Transactional
     public void saveAnswer(List<QuizAnswerDto> answerList, Integer userId) {
