@@ -69,7 +69,7 @@ public class UserService {
             Doctor doctor = doctorRepository.findByUser_Id(userId).orElse(null);
 
             return DoctorDetailResponse.builder()
-                    .id(doctor.getId())
+                    .id(user.getId())
                     .about(doctor.getAbout())
                     .degree(doctor.getDegree())
                     .avatar(user.getAvatar())
@@ -93,7 +93,7 @@ public class UserService {
             Patient patient = patientRepository.findByUser_Id(userId).orElse(null);
 
             return PatientDetailResponse.builder()
-                    .id(patient.getId())
+                    .id(user.getId())
                     .name(patient.getName())
                     .email(user.getEmail())
                     .phone(patient.getPhone())
