@@ -117,7 +117,7 @@ public class UserService {
 
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "doctors", key = "#page + '_' + #size")
+//    @Cacheable(value = "doctors", key = "#page + '_' + #size")
     public PageableResponse<DoctorInfoResponse> getAllDoctors(int page, int size) {
         Page<DoctorInfoResponse> doctors = doctorRepository.findAllDoctor(PageRequest.of(page, size));
         return PageableResponse.<DoctorInfoResponse>builder()

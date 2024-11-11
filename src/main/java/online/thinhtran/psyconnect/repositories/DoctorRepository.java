@@ -23,7 +23,8 @@ public interface DoctorRepository extends JpaRepository<Doctor, Integer> {
         d.id,
         d.name,
         d.user.avatar,
-        d.specialization
+        d.specialization,
+        d.rating
     ) from Doctor d
     
 """)

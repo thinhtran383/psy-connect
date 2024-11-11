@@ -12,4 +12,5 @@ public class DoctorInfoResponse {
     private String name;
     private String avatar;
     private String specialization;
+    private Float rating;
 }
