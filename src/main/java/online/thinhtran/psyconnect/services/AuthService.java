@@ -46,7 +46,7 @@ public class AuthService {
     private final MailService mailService;
 
     @Transactional
-    @CacheEvict(value = "users", allEntries = true)
+    @CacheEvict(value = {"users", "doctors"}, allEntries = true)
     public RegisterResponse register(RegisterDto registerDto) {
         if (registerDto.getRole().equalsIgnoreCase(RoleEnum.DOCTOR.name())) {
             return registerDoctor(registerDto);

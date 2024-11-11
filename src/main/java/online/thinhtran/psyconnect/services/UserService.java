@@ -64,10 +64,10 @@ public class UserService {
     public UserDetailResponse getUserDetail(Integer userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
 
-        Doctor doctor = doctorRepository.findByUser_Id(userId).orElse(null);
-        Patient patient = patientRepository.findByUser_Id(userId).orElse(null);
 
-        if (doctor != null) {
+        if (user != null && user.getRole().equals(RoleEnum.DOCTOR)) {
+            Doctor doctor = doctorRepository.findByUser_Id(userId).orElse(null);
+
             return DoctorDetailResponse.builder()
                     .id(doctor.getId())
                     .about(doctor.getAbout())
@@ -89,7 +89,9 @@ public class UserService {
                     .build();
         }
 
-        if (patient != null) {
+        if (user != null && user.getRole().equals(RoleEnum.PATIENT)) {
+            Patient patient = patientRepository.findByUser_Id(userId).orElse(null);
+
             return PatientDetailResponse.builder()
                     .id(patient.getId())
                     .name(patient.getName())
@@ -117,7 +119,7 @@ public class UserService {
 
 
     @Transactional(readOnly = true)
-//    @Cacheable(value = "doctors", key = "#page + '_' + #size")
+    @Cacheable(value = "doctors", key = "#page + '_' + #size")
     public PageableResponse<DoctorInfoResponse> getAllDoctors(int page, int size) {
         Page<DoctorInfoResponse> doctors = doctorRepository.findAllDoctor(PageRequest.of(page, size));
         return PageableResponse.<DoctorInfoResponse>builder()
