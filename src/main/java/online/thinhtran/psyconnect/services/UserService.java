@@ -117,12 +117,11 @@ public class UserService {
 
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "doctors", key = "#page + '_' + #size")
     public PageableResponse<DoctorInfoResponse> getAllDoctors(int page, int size) {
         Page<DoctorInfoResponse> doctors = doctorRepository.findAllDoctor(PageRequest.of(page, size));
         return PageableResponse.<DoctorInfoResponse>builder()
-                .elements(doctors.stream()
-                        .map(doctor -> modelMapper.map(doctor, DoctorInfoResponse.class))
-                        .collect(Collectors.toList()))
+                .elements(doctors.getContent())
                 .totalElements(doctors.getTotalElements())
                 .totalPages(doctors.getTotalPages())
                 .build();
