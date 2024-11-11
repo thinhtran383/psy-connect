@@ -7,6 +7,7 @@ import online.thinhtran.psyconnect.responses.PageableResponse;
 import online.thinhtran.psyconnect.responses.Response;
 import online.thinhtran.psyconnect.responses.users.UserDetailResponse;
 import online.thinhtran.psyconnect.responses.users.UserResponse;
+import online.thinhtran.psyconnect.responses.users.doctor.DoctorInfoResponse;
 import online.thinhtran.psyconnect.services.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -50,6 +51,18 @@ public class UserController {
                 Response.<UserDetailResponse>builder()
                         .message("Get user profile successfully")
                         .data(userService.getUserDetail(user.getId()))
+                        .build()
+        );
+    }
+
+    @GetMapping("/doctors")
+    public ResponseEntity<Response<PageableResponse<DoctorInfoResponse>>> getAllDoctors(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return ResponseEntity.ok(
+                Response.<PageableResponse<DoctorInfoResponse>>builder()
+                        .data(userService.getAllDoctors(page, size))
                         .build()
         );
     }

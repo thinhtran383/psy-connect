@@ -13,6 +13,7 @@ import online.thinhtran.psyconnect.responses.PageableResponse;
 import online.thinhtran.psyconnect.responses.users.UserDetailResponse;
 import online.thinhtran.psyconnect.responses.users.UserResponse;
 import online.thinhtran.psyconnect.responses.users.doctor.DoctorDetailResponse;
+import online.thinhtran.psyconnect.responses.users.doctor.DoctorInfoResponse;
 import online.thinhtran.psyconnect.responses.users.patient.PatientDetailResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.Cacheable;
@@ -112,6 +113,19 @@ public class UserService {
         doctor.setRating(rating);
 
         doctorRepository.save(doctor);
+    }
+
+
+    @Transactional(readOnly = true)
+    public PageableResponse<DoctorInfoResponse> getAllDoctors(int page, int size) {
+        Page<DoctorInfoResponse> doctors = doctorRepository.findAllDoctor(PageRequest.of(page, size));
+        return PageableResponse.<DoctorInfoResponse>builder()
+                .elements(doctors.stream()
+                        .map(doctor -> modelMapper.map(doctor, DoctorInfoResponse.class))
+                        .collect(Collectors.toList()))
+                .totalElements(doctors.getTotalElements())
+                .totalPages(doctors.getTotalPages())
+                .build();
     }
 
 
