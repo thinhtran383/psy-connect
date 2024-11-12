@@ -13,7 +13,7 @@ public interface RatingRepository extends JpaRepository<Rating, Integer> {
 
     @Query(
             """
-                        select new online.thinhtran.psyconnect.responses.rating.UserRatingResponse(u.username, p.name, r.review, r.rating)
+                        select new online.thinhtran.psyconnect.responses.rating.UserRatingResponse(u.username, p.name, r.review, r.rating, u.avatar)
                         from Rating r
                         join User u on r.user.id = u.id
                         join Patient p on p.user.id = u.id

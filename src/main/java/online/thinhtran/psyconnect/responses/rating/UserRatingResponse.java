@@ -12,4 +12,5 @@ public class UserRatingResponse {
     private String fullName;
     private String content;
     private Float rating;
+    private String avatar;
 }
