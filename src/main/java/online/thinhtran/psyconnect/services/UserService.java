@@ -23,6 +23,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -120,20 +121,37 @@ public class UserService {
 
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "doctors", key = "#page + '_' + #size")
-    public PageableResponse<DoctorInfoResponse> getAllDoctorCatalog(int page, int size) {
+    @Cacheable(value = "doctors", key = "#page + '_' + #size + '_' + #specialization")
+    public PageableResponse<DoctorInfoResponse> getAllDoctorCatalog(String specialization, int page, int size) {
         Page<DoctorInfoResponse> doctors = doctorRepository.findAllDoctor(PageRequest.of(page, size));
+
+        List<DoctorInfoResponse> filteredDoctors = specialization == null
+                ? doctors.getContent()
+                : doctors.getContent().stream()
+                .filter(doctor -> specialization.equals(doctor.getSpecialization()))
+                .collect(Collectors.toList());
+
         return PageableResponse.<DoctorInfoResponse>builder()
-                .elements(doctors.getContent())
-                .totalElements(doctors.getTotalElements())
-                .totalPages(doctors.getTotalPages())
+                .elements(filteredDoctors)
+                .totalElements(filteredDoctors.size())
+                .totalPages((int) Math.ceil((double) filteredDoctors.size() / size))
                 .build();
     }
+
 
     @Transactional(readOnly = true)
     protected Doctor getUserIdByDoctorId(Integer doctorId) { // todo: rename
         return doctorRepository.findByUser_Id(doctorId).orElseThrow(() -> new RuntimeException("Doctor not found"));
     }
 
+    @Transactional(readOnly = true)
+    public PageableResponse<String> getAllSpecialization(int page, int size) {
+        Page<String> specializations = doctorRepository.findAllSpecialization(PageRequest.of(page, size));
+        return PageableResponse.<String>builder()
+                .elements(specializations.getContent())
+                .totalElements(specializations.getTotalElements())
+                .totalPages(specializations.getTotalPages())
+                .build();
+    }
 
 }

@@ -57,11 +57,24 @@ public class UserController {
     @GetMapping("/doctors")
     public ResponseEntity<Response<PageableResponse<DoctorInfoResponse>>> getDoctorCatalog(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String specialization
     ) {
         return ResponseEntity.ok(
                 Response.<PageableResponse<DoctorInfoResponse>>builder()
-                        .data(userService.getAllDoctorCatalog(page, size))
+                        .data(userService.getAllDoctorCatalog(specialization, page, size))
+                        .build()
+        );
+    }
+
+    @GetMapping("/doctors/specializations")
+    public ResponseEntity<Response<PageableResponse<String>>> getDoctorSpecializations(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return ResponseEntity.ok(
+                Response.<PageableResponse<String>>builder()
+                        .data(userService.getAllSpecialization(page, size))
                         .build()
         );
     }
