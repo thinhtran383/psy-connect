@@ -125,19 +125,33 @@ public class UserService {
     @Transactional(readOnly = true)
     @Cacheable(value = "doctors", key = "#page + '_' + #size + '_' + #specialization")
     public PageableResponse<DoctorInfoResponse> getAllDoctorCatalog(String specialization, int page, int size) {
-        Page<DoctorInfoResponse> doctors = doctorRepository.findAllDoctor(PageRequest.of(page, size));
+//        Page<DoctorInfoResponse> doctors = doctorRepository.findAllDoctor(PageRequest.of(page, size));
+//
+//        List<DoctorInfoResponse> filteredDoctors = specialization == null
+//                ? doctors.getContent()
+//                : doctors.getContent().stream()
+//                .filter(doctor -> specialization.equalsIgnoreCase(doctor.getSpecialization()))
+//                .collect(Collectors.toList());
 
-        List<DoctorInfoResponse> filteredDoctors = specialization == null
-                ? doctors.getContent()
-                : doctors.getContent().stream()
-                .filter(doctor -> specialization.equals(doctor.getSpecialization()))
-                .collect(Collectors.toList());
+//        return PageableResponse.<DoctorInfoResponse>builder()
+//                .elements(filteredDoctors)
+//                .totalElements(filteredDoctors.size())
+//                .totalPages((int) Math.ceil((double) filteredDoctors.size() / size))
+//                .build();
+        Page<DoctorInfoResponse> doctors;
+
+        if (specialization == null) {
+            doctors = doctorRepository.findAllDoctor(PageRequest.of(page, size));
+        } else {
+            doctors = doctorRepository.findDoctorsBySpecialization(specialization, PageRequest.of(page, size));
+        }
 
         return PageableResponse.<DoctorInfoResponse>builder()
-                .elements(filteredDoctors)
-                .totalElements(filteredDoctors.size())
-                .totalPages((int) Math.ceil((double) filteredDoctors.size() / size))
+                .elements(doctors.getContent())
+                .totalElements(doctors.getTotalElements())
+                .totalPages(doctors.getTotalPages())
                 .build();
+
     }
 
 

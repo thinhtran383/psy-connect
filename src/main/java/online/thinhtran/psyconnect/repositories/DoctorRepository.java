@@ -20,19 +20,31 @@ public interface DoctorRepository extends JpaRepository<Doctor, Integer> {
 
 
     @Query("""
-    select new online.thinhtran.psyconnect.responses.users.doctor.DoctorInfoResponse(
-        d.user.id,
-        d.name,
-        d.user.avatar,
-        d.specialization,
-        d.rating
-    ) from Doctor d
-    
-""")
+                select new online.thinhtran.psyconnect.responses.users.doctor.DoctorInfoResponse(
+                    d.user.id,
+                    d.name,
+                    d.user.avatar,
+                    d.specialization,
+                    d.rating
+                ) from Doctor d
+            
+            """)
     Page<DoctorInfoResponse> findAllDoctor(Pageable pageable);
 
     @Query("""
                 select d.specialization from Doctor d
             """)
     Page<String> findAllSpecialization(Pageable pageable);
+
+
+    @Query("""
+                select new online.thinhtran.psyconnect.responses.users.doctor.DoctorInfoResponse(
+                    d.user.id,
+                    d.name,
+                    d.user.avatar,
+                    d.specialization,
+                    d.rating
+                ) from Doctor d where LOWER(d.specialization) = LOWER(:specialization)
+            """)
+    Page<DoctorInfoResponse> findDoctorsBySpecialization(String specialization, Pageable pageable);
 }
