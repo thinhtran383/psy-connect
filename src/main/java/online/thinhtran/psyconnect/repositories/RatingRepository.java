@@ -17,10 +17,11 @@ public interface RatingRepository extends JpaRepository<Rating, Integer> {
                         from Rating r
                         join User u on r.user.id = u.id
                         join Patient p on p.user.id = u.id
-                        where r.doctor.id = :doctorId
+                        join Doctor d on r.doctor.id = d.id
+                        where d.user.id = :userId
                     """
     )
-    Page<UserRatingResponse> findAllByDoctorId(Integer doctorId, Pageable pageable);
+    Page<UserRatingResponse> findAllRatingByUserId(Integer userId, Pageable pageable);
 
 
     @Query(

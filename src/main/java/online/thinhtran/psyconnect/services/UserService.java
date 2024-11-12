@@ -16,13 +16,13 @@ import online.thinhtran.psyconnect.responses.users.doctor.DoctorDetailResponse;
 import online.thinhtran.psyconnect.responses.users.doctor.DoctorInfoResponse;
 import online.thinhtran.psyconnect.responses.users.patient.PatientDetailResponse;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -110,8 +110,9 @@ public class UserService {
     }
 
     @Transactional
-    public void updateRating(Integer userId, Float rating) {
-        Doctor doctor = doctorRepository.findById(userId).orElseThrow(() -> new RuntimeException("Doctor not found"));
+    @CacheEvict(value = "doctors", allEntries = true)
+    public void updateRating(Integer doctorId, Float rating) {
+        Doctor doctor = doctorRepository.findById(doctorId).orElseThrow(() -> new RuntimeException("Doctor not found"));
         doctor.setRating(rating);
 
         doctorRepository.save(doctor);
@@ -120,13 +121,18 @@ public class UserService {
 
     @Transactional(readOnly = true)
     @Cacheable(value = "doctors", key = "#page + '_' + #size")
-    public PageableResponse<DoctorInfoResponse> getAllDoctors(int page, int size) {
+    public PageableResponse<DoctorInfoResponse> getAllDoctorCatalog(int page, int size) {
         Page<DoctorInfoResponse> doctors = doctorRepository.findAllDoctor(PageRequest.of(page, size));
         return PageableResponse.<DoctorInfoResponse>builder()
                 .elements(doctors.getContent())
                 .totalElements(doctors.getTotalElements())
                 .totalPages(doctors.getTotalPages())
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    protected Doctor getUserIdByDoctorId(Integer doctorId) { // todo: rename
+        return doctorRepository.findByUser_Id(doctorId).orElseThrow(() -> new RuntimeException("Doctor not found"));
     }
 
 

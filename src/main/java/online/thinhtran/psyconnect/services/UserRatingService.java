@@ -1,7 +1,9 @@
 package online.thinhtran.psyconnect.services;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import online.thinhtran.psyconnect.dto.rating.UserRatingDto;
+import online.thinhtran.psyconnect.entities.Doctor;
 import online.thinhtran.psyconnect.entities.Rating;
 import online.thinhtran.psyconnect.entities.User;
 import online.thinhtran.psyconnect.repositories.RatingRepository;
@@ -17,14 +19,15 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserRatingService {
     private final RatingRepository ratingRepository;
-    private final ModelMapper modelMapper;
     private final UserService userService;
+    private final ModelMapper modelMapper;
 
     @Transactional(readOnly = true)
-    public PageableResponse<UserRatingResponse> getAllRatingByDoctorId(Integer doctorId, int page, int size) {
-        Page<UserRatingResponse> ratings = ratingRepository.findAllByDoctorId(doctorId, PageRequest.of(page, size));
+    public PageableResponse<UserRatingResponse> getAllRatingByDoctorId(Integer userId, int page, int size) {
+        Page<UserRatingResponse> ratings = ratingRepository.findAllRatingByUserId(userId, PageRequest.of(page, size));
 
         return PageableResponse.<UserRatingResponse>builder()
                 .elements(ratings.getContent())
@@ -35,18 +38,27 @@ public class UserRatingService {
 
     @Transactional
     public void rating(User user, UserRatingDto userRatingDto) {
+        Doctor doctor = userService.getUserIdByDoctorId(userRatingDto.getDoctorId());
+
         Rating rating = modelMapper.map(userRatingDto, Rating.class);
         rating.setUser(user);
+        rating.setDoctor(doctor);
 
-
-        userService.updateRating(userRatingDto.getDoctorId(), reCalculateRating(userRatingDto.getDoctorId()));
         ratingRepository.save(rating);
+
+        Float updatedRating = reCalculateRating(doctor.getId());
+        userService.updateRating(doctor.getId(), updatedRating);
     }
 
     @Transactional
     protected Float reCalculateRating(Integer doctorId) {
         List<Float> ratings = ratingRepository.getAllRatingByDoctorId(doctorId);
 
+        if (ratings.isEmpty()) {
+            return 0.0f;
+        }
+
         return ratings.stream().reduce(0f, Float::sum) / ratings.size();
     }
+
 }

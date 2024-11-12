@@ -10,7 +10,6 @@ import online.thinhtran.psyconnect.responses.users.UserResponse;
 import online.thinhtran.psyconnect.responses.users.doctor.DoctorInfoResponse;
 import online.thinhtran.psyconnect.services.UserService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,13 +55,13 @@ public class UserController {
     }
 
     @GetMapping("/doctors")
-    public ResponseEntity<Response<PageableResponse<DoctorInfoResponse>>> getAllDoctors(
+    public ResponseEntity<Response<PageableResponse<DoctorInfoResponse>>> getDoctorCatalog(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         return ResponseEntity.ok(
                 Response.<PageableResponse<DoctorInfoResponse>>builder()
-                        .data(userService.getAllDoctors(page, size))
+                        .data(userService.getAllDoctorCatalog(page, size))
                         .build()
         );
     }

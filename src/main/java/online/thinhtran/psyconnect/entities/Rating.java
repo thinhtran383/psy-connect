@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -15,6 +16,7 @@ import java.time.Instant;
 @Entity
 @Table(name = "Ratings", schema = "psy")
 @EntityListeners(AuditingEntityListener.class)
+
 public class Rating {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

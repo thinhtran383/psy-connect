@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 @Builder
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "Doctors", schema = "psy")
+@ToString
 public class Doctor {
     @Id
     @Column(name = "doctor_id", nullable = false)
@@ -29,6 +30,7 @@ public class Doctor {
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
+    @ToString.Exclude
     private User user;
 
     @Size(max = 255)

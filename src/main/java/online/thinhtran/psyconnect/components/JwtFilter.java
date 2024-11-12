@@ -104,7 +104,6 @@ public class JwtFilter extends OncePerRequestFilter {
                 Pair.of(String.format("%s/auth/admin/login", apiPrefix), "POST"),
 
 
-
 //                Pair.of(String.format("%s/auth/approve/**", apiPrefix), "PUT"),
 
                 //chat
@@ -117,10 +116,20 @@ public class JwtFilter extends OncePerRequestFilter {
                 Pair.of("/info/**", "GET"),
                 Pair.of("/socket.io", "GET"),
 
-                //get user
-                Pair.of(String.format("%s/user", apiPrefix), "GET")
 
-        );
+                //get user
+                Pair.of(String.format("%s/user", apiPrefix), "GET"),
+
+                Pair.of("/login", "GET"),
+                Pair.of("/login/oauth2/code/**", "GET"),
+                Pair.of("/login/oauth2/code/**", "POST"),
+
+
+                Pair.of(String.format("%s/oauth/**", apiPrefix), "GET"),
+                Pair.of(String.format("%s/oauth/**", apiPrefix), "POST")
+
+
+                );
 
 
         String requestPath = request.getServletPath();

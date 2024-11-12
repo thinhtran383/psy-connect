@@ -69,7 +69,14 @@ public class WebSecurityConfig {
                             "/user",
                             "/user/**",
                             "/info",
-                            "/info/**"
+                            "/info/**",
+
+                            // oauth
+                            String.format("%s/oauth/**", apiPrefix),
+                            "/login/oauth2/code/**",
+                            "/oauth2/authorization/**",
+                            "/favicon.ico"
+
                     ).permitAll();
         });
 
@@ -77,6 +84,11 @@ public class WebSecurityConfig {
         httpSecurity
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .authenticationProvider(authenticationProvider);
+
+//        httpSecurity.oauth2Login(oauth2 -> {
+//            oauth2.defaultSuccessUrl("/home");
+//
+//        });
 
         return httpSecurity.build();
     }
