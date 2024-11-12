@@ -1,5 +1,6 @@
 package online.thinhtran.psyconnect.services;
 
+import com.cloudinary.api.exceptions.BadRequest;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ import online.thinhtran.psyconnect.entities.Doctor;
 import online.thinhtran.psyconnect.entities.Patient;
 import online.thinhtran.psyconnect.entities.User;
 import online.thinhtran.psyconnect.exceptions.ResourceAlreadyExisted;
+import online.thinhtran.psyconnect.exceptions.ResourceNotFound;
 import online.thinhtran.psyconnect.repositories.DoctorRepository;
 import online.thinhtran.psyconnect.repositories.PatientRepository;
 import online.thinhtran.psyconnect.repositories.UserRepository;
@@ -150,7 +152,7 @@ public class AuthService {
     @Transactional(readOnly = true)
     public LoginResponse login(LoginDto loginDto) {
         User user = userRepository.findByUsername(loginDto.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new BadCredentialsException("User not existed"));
 
         String jwtToken = authenticateUser(loginDto, user);
 
@@ -188,7 +190,7 @@ public class AuthService {
     @Transactional
     public LoginResponse adminLogin(LoginDto loginDto) {
         User user = userRepository.findByUsername(loginDto.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new BadCredentialsException("User not existed"));
 
         if (user.getRole() != RoleEnum.ADMIN) {
             throw new BadCredentialsException("Invalid request");
@@ -224,15 +226,15 @@ public class AuthService {
     }
 
     @Transactional
-    public void approveDoctor(Integer id) {
+    public void approveDoctor(Integer id) throws BadRequest {
         Doctor doctor = doctorRepository.findByUser_Id(id)
-                .orElseThrow(() -> new RuntimeException("doctors not found"));
+                .orElseThrow(() -> new ResourceNotFound("Doctor not found"));
 
         if (doctor.getUser().getRole() == RoleEnum.DOCTOR && doctor.getUser().getStatus() == StatusEnum.PENDING) {
             doctor.getUser().setStatus(StatusEnum.APPROVED);
             doctorRepository.save(doctor);
         } else {
-            throw new RuntimeException("Invalid request");
+            throw new BadRequest("Invalid request");
         }
     }
 
@@ -256,7 +258,7 @@ public class AuthService {
         mailDto.setSubject("Change password");
 
         User user = userRepository.findByEmail(mailDto.getTo())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new BadCredentialsException("User not existed"));
 
         user.setPassword(passwordEncoder.encode(mailDto.getContent()));
 

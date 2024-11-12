@@ -6,6 +6,7 @@ import online.thinhtran.psyconnect.common.RoleEnum;
 import online.thinhtran.psyconnect.entities.Doctor;
 import online.thinhtran.psyconnect.entities.Patient;
 import online.thinhtran.psyconnect.entities.User;
+import online.thinhtran.psyconnect.exceptions.ResourceNotFound;
 import online.thinhtran.psyconnect.repositories.DoctorRepository;
 import online.thinhtran.psyconnect.repositories.PatientRepository;
 import online.thinhtran.psyconnect.repositories.UserRepository;
@@ -20,6 +21,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,7 +41,7 @@ public class UserService {
     @Transactional(readOnly = true)
     @Cacheable(value = "users", key = "#username")
     public User getUserByUsername(String username) {
-        return userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+        return userRepository.findByUsername(username).orElseThrow(() -> new BadCredentialsException("User not found"));
     }
 
     @Transactional(readOnly = true)
@@ -63,7 +65,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserDetailResponse getUserDetail(Integer userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFound("User not found"));
 
 
         if (user != null && user.getRole().equals(RoleEnum.DOCTOR)) {
@@ -113,7 +115,7 @@ public class UserService {
     @Transactional
     @CacheEvict(value = "doctors", allEntries = true)
     public void updateRating(Integer doctorId, Float rating) {
-        Doctor doctor = doctorRepository.findById(doctorId).orElseThrow(() -> new RuntimeException("Doctor not found"));
+        Doctor doctor = doctorRepository.findById(doctorId).orElseThrow(() -> new ResourceNotFound("Doctor not found"));
         doctor.setRating(rating);
 
         doctorRepository.save(doctor);
@@ -141,7 +143,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     protected Doctor getUserIdByDoctorId(Integer doctorId) { // todo: rename
-        return doctorRepository.findByUser_Id(doctorId).orElseThrow(() -> new RuntimeException("Doctor not found"));
+        return doctorRepository.findByUser_Id(doctorId).orElseThrow(() -> new ResourceNotFound("Doctor not found"));
     }
 
     @Transactional(readOnly = true)

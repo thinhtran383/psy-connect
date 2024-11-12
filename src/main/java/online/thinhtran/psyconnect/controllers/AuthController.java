@@ -1,5 +1,6 @@
 package online.thinhtran.psyconnect.controllers;
 
+import com.cloudinary.api.exceptions.BadRequest;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import online.thinhtran.psyconnect.dto.auth.ChangePasswordDto;
@@ -43,7 +44,7 @@ public class AuthController {
     }
 
     @PutMapping("/approve/{id}")
-    public ResponseEntity<Response<String>> approve(@PathVariable Integer id) {
+    public ResponseEntity<Response<String>> approve(@PathVariable Integer id) throws BadRequest {
         authService.approveDoctor(id);
 
         return ResponseEntity.ok(Response.<String>builder()
