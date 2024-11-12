@@ -3,6 +3,7 @@ package online.thinhtran.psyconnect.repositories;
 import online.thinhtran.psyconnect.entities.Doctor;
 import online.thinhtran.psyconnect.responses.users.doctor.DoctorInfoResponse;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -30,4 +31,8 @@ public interface DoctorRepository extends JpaRepository<Doctor, Integer> {
 """)
     Page<DoctorInfoResponse> findAllDoctor(Pageable pageable);
 
+    @Query("""
+                select d.specialization from Doctor d
+            """)
+    Page<String> findAllSpecialization(Pageable pageable);
 }
