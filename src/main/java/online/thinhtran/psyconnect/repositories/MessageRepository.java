@@ -10,6 +10,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 public interface MessageRepository extends JpaRepository<Message, Integer> {
 
@@ -27,10 +29,40 @@ public interface MessageRepository extends JpaRepository<Message, Integer> {
     )
     Page<MessageDto> findMessagesBetweenUsers(String senderName, String receiverName, Pageable pageable);
 
-    @Query("SELECT u.username, m.content, m.timestamp " +
-            "FROM Message m JOIN m.sender u " +
-            "WHERE m.sender.username = :currentUsername OR m.receiver.username = :currentUsername " +
-            "AND u.username NOT IN :existingUsernames ")
+    @Query("""
+            SELECT u.username, m.content, m.timestamp
+            FROM Message m JOIN m.sender u 
+            WHERE m.sender.username = :currentUsername OR m.receiver.username = :currentUsername 
+            AND u.username NOT IN :existingUsernames 
+            """)
     List<Object[]> findLastMessagesForUser(@Param("currentUsername") String currentUsername,
                                            @Param("existingUsernames") List<String> existingUsernames);
+
+
+//    @Query("SELECT m FROM Message m JOIN FETCH m.sender s JOIN FETCH m.receiver r WHERE s.username = :username AND r.username NOT IN :excludedReceivers ORDER BY m.timestamp DESC")
+//    List<Message> findMessagesBySenderAndExcludedReceivers(@Param("username") String username, @Param("excludedReceivers") Set<String> excludedReceivers);
+
+
+    @Query(
+            """
+                    SELECT m.content, m.timestamp,
+                           r.username,
+                           COALESCE(dReceiver.name, pReceiver.name) AS fullNameReceiver,
+                           s.avatar
+                    FROM Message m
+                    JOIN m.sender s
+                    LEFT JOIN Doctor d ON d.user.id = s.id
+                    LEFT JOIN Patient p ON p.user.id = s.id
+                    JOIN m.receiver r
+                    LEFT JOIN Doctor dReceiver ON dReceiver.user.id = r.id
+                    LEFT JOIN Patient pReceiver ON pReceiver.user.id = r.id
+                    WHERE s.username = :username
+                      AND r.username NOT IN :excludedReceivers
+                    ORDER BY m.timestamp DESC
+            """
+    )
+    List<Object[]> findMessagesBySenderAndExcludedReceivers(@Param("username") String username,
+                                                            @Param("excludedReceivers") Set<String> excludedReceivers);
+
+
 }

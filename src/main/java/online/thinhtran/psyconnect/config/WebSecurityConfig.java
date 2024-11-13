@@ -40,6 +40,8 @@ public class WebSecurityConfig {
                 .sessionManagement(sessionManagement -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
+
+
         httpSecurity.authorizeHttpRequests(request -> {
             request
                     .requestMatchers(
@@ -89,6 +91,9 @@ public class WebSecurityConfig {
         httpSecurity
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .authenticationProvider(authenticationProvider);
+
+
+
 
 //        httpSecurity.oauth2Login(oauth2 -> {
 //            oauth2.defaultSuccessUrl("/home");

@@ -3,18 +3,15 @@ package online.thinhtran.psyconnect.components;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import online.thinhtran.psyconnect.entities.User;
-import online.thinhtran.psyconnect.services.UserService;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
-
-import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
@@ -29,32 +26,31 @@ public class JwtInterceptor implements ChannelInterceptor {
 
         SimpMessageHeaderAccessor accessor = SimpMessageHeaderAccessor.wrap(message);
 
+        // Check if the message type is CONNECT to intercept only initial connections
+        if (SimpMessageType.CONNECT.equals(accessor.getMessageType())) {
+            String authorizationHeader = accessor.getFirstNativeHeader("Authorization");
 
-        String authorizationHeader = accessor.getFirstNativeHeader("Authorization");
+            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+                String jwtToken = authorizationHeader.substring(7);
+                String username = jwtGenerator.extractUsername(jwtToken);
 
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+                if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                    User userDetails = (User) userDetailsService.loadUserByUsername(username);
 
-            String jwtToken = authorizationHeader.substring(7);
+                    UsernamePasswordAuthenticationToken authenticationToken =
+                            new UsernamePasswordAuthenticationToken(
+                                    userDetails,
+                                    null,
+                                    userDetails.getAuthorities()
+                            );
 
-            String username = jwtGenerator.extractUsername(jwtToken);
+                    authenticationToken.setDetails(userDetails);
+                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
-            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                User userDetails = (User) userDetailsService.loadUserByUsername(username);
+                    accessor.getSessionAttributes().put("simpUser", authenticationToken.getPrincipal());
 
-                UsernamePasswordAuthenticationToken authenticationToken =
-                        new UsernamePasswordAuthenticationToken(
-                                userDetails,
-                                null,
-                                userDetails.getAuthorities()
-                        );
-
-                authenticationToken.setDetails(userDetails);
-
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-
-                accessor.setUser(authenticationToken);
-                Objects.requireNonNull(accessor.getSessionAttributes()).put("simpUser", authenticationToken.getPrincipal());
-                log.info("Header: {}", accessor);
+                    log.info("User authenticated on CONNECT: {}", username);
+                }
             }
         }
 

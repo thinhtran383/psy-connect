@@ -14,6 +14,7 @@ public class ChatCategoriesResponse {
     private String username;
     private String fullName;
     private String lastMessage;
+    private String avatar;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastMessageTime;

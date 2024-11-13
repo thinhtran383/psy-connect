@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import online.thinhtran.psyconnect.dto.chat.MessageDto;
 import online.thinhtran.psyconnect.entities.User;
+import online.thinhtran.psyconnect.responses.users.UserDetailResponse;
 import online.thinhtran.psyconnect.services.ChatService;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -34,6 +35,7 @@ public class MessageController {
     ) {
 
         User simpUser = (User) Objects.requireNonNull(headerAccessor.getSessionAttributes()).get("simpUser");
+
         log.info("simpUser: {}", simpUser);
 
         messageDto.setSenderName(simpUser.getUsername());

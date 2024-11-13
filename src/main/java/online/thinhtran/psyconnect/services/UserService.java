@@ -27,6 +27,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,6 +46,7 @@ public class UserService {
     public User getUserByUsername(String username) {
         return userRepository.findByUsername(username).orElseThrow(() -> new BadCredentialsException("User not found"));
     }
+
 
     @Transactional(readOnly = true)
     @Cacheable(value = "users", key = "#page + '_' + #size + '_' + #roleEnum")
@@ -169,6 +172,26 @@ public class UserService {
                 .totalElements(specializations.getTotalElements())
                 .totalPages(specializations.getTotalPages())
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    public List<User> getUsersByUsernames(Set<String> usernames) {
+        return userRepository.findByUsernameIn(usernames);
+    }
+
+    @Transactional(readOnly = true)
+    protected Map<String, String> getAvatarAndNameByUsernames(String username) {
+        Doctor doctor = doctorRepository.findByUser_Username(username).orElse(null);
+        if (doctor != null) {
+            return Map.of("avatar", doctor.getUser().getAvatar(), "name", doctor.getName());
+        } else {
+            Patient patient = patientRepository.findByUser_Username(username).orElse(null);
+            if (patient != null) {
+                return Map.of("avatar", patient.getUser().getAvatar(), "name", patient.getName());
+            }
+        }
+
+        return null;
     }
 
 }

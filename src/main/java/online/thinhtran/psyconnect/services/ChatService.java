@@ -9,6 +9,7 @@ import online.thinhtran.psyconnect.repositories.MessageRepository;
 import online.thinhtran.psyconnect.repositories.UserRepository;
 import online.thinhtran.psyconnect.responses.PageableResponse;
 import online.thinhtran.psyconnect.responses.chat.ChatCategoriesResponse;
+import online.thinhtran.psyconnect.responses.users.UserDetailResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -29,11 +30,16 @@ import java.util.stream.Stream;
 public class ChatService {
     private final MessageRepository messageRepository;
     private final RedisTemplate<String, MessageDto> redisTemplate;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
 
     public void saveMessageToRedis(MessageDto message) {
         String key = String.format("messages:%s-%s", message.getSenderName(), message.getReceiverName());
+
+        Map<String, String> avatarAndName = userService.getAvatarAndNameByUsernames(message.getReceiverName());
+
+        message.setAvatar(avatarAndName.get("avatar"));
+        message.setFullNameReceiver(avatarAndName.get("fullName"));
 
         redisTemplate.opsForList().rightPush(key, message);
         redisTemplate.expire(key, 1, java.util.concurrent.TimeUnit.DAYS);
@@ -98,7 +104,7 @@ public class ChatService {
 //                .build();
 //    }
 
-//    @Scheduled(fixedRate = 3600000)
+    //    @Scheduled(fixedRate = 3600000)
     public void syncMessagesFromRedisToDb() {
         Set<String> keys = redisTemplate.keys("messages:*");
         if (keys != null) {
@@ -116,7 +122,7 @@ public class ChatService {
                     .flatMap(msg -> Stream.of(msg.getSenderName(), msg.getReceiverName()))
                     .collect(Collectors.toSet());
 
-            Map<String, User> userMap = userRepository.findByUsernameIn(usernames)
+            Map<String, User> userMap = userService.getUsersByUsernames(usernames)
                     .stream()
                     .collect(Collectors.toMap(User::getUsername, Function.identity()));
 
@@ -142,37 +148,58 @@ public class ChatService {
         log.info("Sync messages from Redis to DB");
     }
 
+
     @Transactional(readOnly = true)
-    public List<ChatCategoriesResponse> getChatCategories(String currentUsername) { // todo
-        List<ChatCategoriesResponse> chatList = new ArrayList<>();
+    public List<ChatCategoriesResponse> getChatCategories(String username) {
+        List<ChatCategoriesResponse> result = new ArrayList<>();
 
-        // Redis pattern to get all conversations involving the current user
-        Set<String> chatKeys = redisTemplate.keys("messages:" + currentUsername + "-*");
+        // get all keys from Redis
+        Set<String> keys = redisTemplate.keys("messages:" + username + "-*");
+        Set<String> existingReceivers = new HashSet<>();
 
-        if (chatKeys != null) {
-            for (String key : chatKeys) {
-                // Retrieve the last message in each conversation from Redis
-                MessageDto lastMessage = redisTemplate.opsForList().index(key, -1);
+        if (keys != null) {
+            keys.forEach(key -> {
+                String[] split = key.split("-");
+                String receiverName = split[1];
+                existingReceivers.add(receiverName);
 
-                // Extract the receiver's username from the key
-                String[] participants = key.split(":")[1].split("-");
-                String otherUsername = participants[0].equals(currentUsername) ? participants[1] : participants[0];
+                // get last message from Redis
+                MessageDto lastMessage = Optional.ofNullable(redisTemplate.opsForList().range(key, -1, -1))
+                        .map(messages -> messages.get(0))
+                        .orElse(null);
 
-                // Retrieve the full name of the other participant
-                Optional<User> otherUserOpt = userRepository.findByUsername(otherUsername);
-                otherUserOpt.ifPresent(otherUser -> {
-                    chatList.add(ChatCategoriesResponse.builder()
-                            .username(otherUser.getUsername())
+
+                if (lastMessage != null) {
+
+                    ChatCategoriesResponse chatCategoriesResponse = ChatCategoriesResponse.builder()
                             .lastMessage(lastMessage.getMessage())
+                            .username(receiverName)
+                            .fullName(lastMessage.getFullNameReceiver())
+                            .avatar(lastMessage.getAvatar())
                             .lastMessageTime(lastMessage.getTimestamp())
-                            .build());
-                });
-            }
+                            .build();
+
+                    result.add(chatCategoriesResponse);
+                }
+            });
         }
 
+        // get missing messages from DB
+        List<Object[]> missingMessages = messageRepository.findMessagesBySenderAndExcludedReceivers(username, existingReceivers);
 
-        return chatList;
+        missingMessages.forEach(message -> {
+            ChatCategoriesResponse chatCategoriesResponse = ChatCategoriesResponse.builder()
+                    .lastMessage((String) message[0])
+                    .lastMessageTime((LocalDateTime) message[1])
+                    .username((String) message[2])
+                    .fullName((String) message[3])
+                    .avatar((String) message[4])
+                    .build();
+
+            result.add(chatCategoriesResponse);
+        });
+
+        return result;
     }
-
 
 }
