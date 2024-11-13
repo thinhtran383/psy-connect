@@ -10,6 +10,7 @@ import online.thinhtran.psyconnect.responses.PageableResponse;
 import online.thinhtran.psyconnect.responses.comments.UserCommentResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +29,7 @@ public class CommentService {
 
     @Transactional(readOnly = true)
     public PageableResponse<UserCommentResponse> getAllCommentsByPostId(Integer postId, int page, int size) {
-        Page<UserCommentResponse> comments = commentRepository.findAllByPostId(postId, PageRequest.of(page, size));
+        Page<UserCommentResponse> comments = commentRepository.findAllByPostId(postId, PageRequest.of(page, size, Sort.by("createdAt").descending()));
         return PageableResponse.<UserCommentResponse>builder()
                 .elements(comments.getContent())
                 .totalElements(comments.getTotalElements())

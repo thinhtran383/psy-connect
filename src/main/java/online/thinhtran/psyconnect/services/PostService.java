@@ -13,6 +13,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +36,7 @@ public class PostService {
     @Transactional(readOnly = true)
     @Cacheable(value = "postCache", key = "#page + '_' + #page + '_' + #size")
     public PageableResponse<PostResponse> getAllPost(int page, int size) {
-        Page<Object[]> postDetails = postRepository.findAllWithLikesAndComments(PageRequest.of(page, size));
+        Page<Object[]> postDetails = postRepository.findAllWithLikesAndComments(PageRequest.of(page, size, Sort.by("createdAt").descending()));
 
 
         List<PostResponse> postResponses = getPostResponse(postDetails).collect(Collectors.toList());
@@ -48,12 +49,13 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public PostDetailResponse getPostDetailById(Integer postId, Integer userId) {
+    public PostDetailResponse getPostDetailById(Integer postId, User user) {
 //        List<UserCommentResponse> comments = commentService.getAllCommentsByPostId(postId);
 
-        log.error("User id: {}", userId);
 
         Object[] postDetails = (Object[]) postRepository.findAllWithLikeAndCommentsByPostId(postId);
+
+        boolean isLiked = user != null && postLikeService.isUserLikePost(postId, user.getId());
 
         return PostDetailResponse.builder()
 //                .commentResponses(comments)
@@ -66,7 +68,7 @@ public class PostService {
                 .author((String) postDetails[5])
                 .createdAt((LocalDateTime) postDetails[6])
                 .updatedAt((LocalDateTime) postDetails[7])
-                .liked(postLikeService.isUserLikePost(postId, userId))
+                .liked(isLiked)
                 .build();
     }
 
@@ -112,8 +114,6 @@ public class PostService {
                 .tag(tagService.getTagById(postDto.getTagId()))
                 .createdAt(LocalDateTime.now())
                 .build();
-
-
     }
 
 

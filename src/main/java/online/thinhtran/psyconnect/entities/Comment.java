@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 
@@ -14,6 +16,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @Builder
 @Table(name = "Comments", schema = "psy")
+@EntityListeners(AuditingEntityListener.class)
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,8 +42,9 @@ public class Comment {
     @Column(name = "content", nullable = false)
     private String content;
 
-    @ColumnDefault("CURRENT_TIMESTAMP")
+
     @Column(name = "created_at")
+    @CreatedDate
     private Instant createdAt;
 
 }

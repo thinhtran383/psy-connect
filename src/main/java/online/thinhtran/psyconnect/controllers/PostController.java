@@ -59,13 +59,13 @@ public class PostController {
                 .build());
     }
 
-    @GetMapping("/details/{postId}")
+    @GetMapping("/{postId}")
     public ResponseEntity<Response<PostDetailResponse>> getPostDetail(
             @PathVariable Integer postId,
             @AuthenticationPrincipal User user
     ) {
         return ResponseEntity.ok(Response.<PostDetailResponse>builder()
-                .data(postService.getPostDetailById(postId, user.getId()))
+                .data(postService.getPostDetailById(postId, user))
                 .message("Post details retrieved")
                 .build());
     }

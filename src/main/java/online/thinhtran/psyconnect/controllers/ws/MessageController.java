@@ -36,7 +36,7 @@ public class MessageController {
         User simpUser = (User) Objects.requireNonNull(headerAccessor.getSessionAttributes()).get("simpUser");
         log.info("simpUser: {}", simpUser);
 
-//        messageDto.setSenderName(simpUser.getUsername());
+        messageDto.setSenderName(simpUser.getUsername());
 
         chatService.saveMessageToRedis(messageDto);
 

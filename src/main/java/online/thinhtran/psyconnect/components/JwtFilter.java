@@ -13,6 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.data.util.Pair;
 
@@ -86,7 +87,9 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     private boolean nonAuthRequest(HttpServletRequest request) {
+        AntPathMatcher pathMatcher = new AntPathMatcher();
         final List<Pair<String, String>> nonAuthEndpoints = List.of(
+                // Swagger endpoints
                 Pair.of("/swagger-ui", "GET"),
                 Pair.of("/v3/api-docs/**", "GET"),
                 Pair.of("/v3/api-docs", "GET"),
@@ -98,45 +101,41 @@ public class JwtFilter extends OncePerRequestFilter {
                 Pair.of("/swagger-ui.html", "GET"),
                 Pair.of("/swagger-ui/index.html", "GET"),
 
-                //auth
+                // Authentication endpoints
                 Pair.of(String.format("%s/auth/login", apiPrefix), "POST"),
                 Pair.of(String.format("%s/auth/register", apiPrefix), "POST"),
                 Pair.of(String.format("%s/auth/admin/login", apiPrefix), "POST"),
 
-
-//                Pair.of(String.format("%s/auth/approve/**", apiPrefix), "PUT"),
-
-                //chat
+                // Chat endpoints
                 Pair.of("/ws", "GET"),
                 Pair.of("/ws/**", "GET"),
                 Pair.of("/socket.io/**", "GET"),
                 Pair.of("/user", "GET"),
                 Pair.of("/user/**", "GET"),
-                Pair.of("/info", "GET"),    // for health check
+                Pair.of("/info", "GET"),
                 Pair.of("/info/**", "GET"),
                 Pair.of("/socket.io", "GET"),
 
-
-                //get user
+                // Get user endpoint
                 Pair.of(String.format("%s/user", apiPrefix), "GET"),
 
+                // OAuth and login endpoints
                 Pair.of("/login", "GET"),
                 Pair.of("/login/oauth2/code/**", "GET"),
                 Pair.of("/login/oauth2/code/**", "POST"),
-
-
                 Pair.of(String.format("%s/oauth/**", apiPrefix), "GET"),
-                Pair.of(String.format("%s/oauth/**", apiPrefix), "POST")
+                Pair.of(String.format("%s/oauth/**", apiPrefix), "POST"),
 
-
-                );
-
+                // Post endpoints
+                Pair.of(String.format("%s/posts", apiPrefix), "GET"),
+                Pair.of(String.format("%s/posts/{postId:[0-9]+}", apiPrefix), "GET")
+        );
 
         String requestPath = request.getServletPath();
         String requestMethod = request.getMethod();
 
         return nonAuthEndpoints.stream()
-                .anyMatch(pair -> requestPath.matches(pair.getFirst().replace("**", ".*"))
+                .anyMatch(pair -> pathMatcher.match(pair.getFirst(), requestPath)
                         && requestMethod.equalsIgnoreCase(pair.getSecond()));
     }
 }

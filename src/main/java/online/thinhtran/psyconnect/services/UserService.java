@@ -21,6 +21,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,9 +50,9 @@ public class UserService {
     public PageableResponse<UserResponse> getAllUsers(int page, int size, RoleEnum roleEnum) {
         Page<User> users;
         if (roleEnum != null) {
-            users = userRepository.findAllByRole(roleEnum, PageRequest.of(page, size));
+            users = userRepository.findAllByRole(roleEnum, PageRequest.of(page, size, Sort.by("createdAt").descending()));
         } else {
-            users = userRepository.findAllByRoleNot(RoleEnum.ADMIN, PageRequest.of(page, size));
+            users = userRepository.findAllByRoleNot(RoleEnum.ADMIN, PageRequest.of(page, size, Sort.by("createdAt").descending()));
         }
 
         return PageableResponse.<UserResponse>builder()

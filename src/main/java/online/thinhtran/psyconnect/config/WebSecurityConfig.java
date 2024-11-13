@@ -75,7 +75,12 @@ public class WebSecurityConfig {
                             String.format("%s/oauth/**", apiPrefix),
                             "/login/oauth2/code/**",
                             "/oauth2/authorization/**",
-                            "/favicon.ico"
+                            "/favicon.ico",
+
+                            // post
+                            String.format("%s/posts", apiPrefix),
+                            String.format("%s/posts/{postId}", apiPrefix)
+
 
                     ).permitAll();
         });

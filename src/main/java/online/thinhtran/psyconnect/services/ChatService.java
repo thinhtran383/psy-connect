@@ -11,6 +11,7 @@ import online.thinhtran.psyconnect.responses.PageableResponse;
 import online.thinhtran.psyconnect.responses.chat.ChatCategoriesResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -48,6 +49,11 @@ public class ChatService {
             int start = (page - 1) * size;
             int end = start + size - 1;
             List<MessageDto> messageDto = redisTemplate.opsForList().range(key, start, end);
+
+            if (messageDto != null) {
+                messageDto.sort(Comparator.comparing(MessageDto::getTimestamp).reversed());
+            }
+
             long totalElements = Optional.ofNullable(redisTemplate.opsForList().size(key)).orElse(0L);
             long totalPages = (totalElements + size - 1) / size;
 
@@ -58,7 +64,12 @@ public class ChatService {
                     .build();
         }
 
-        Page<MessageDto> messages = messageRepository.findMessagesBetweenUsers(senderName, receiverName, PageRequest.of(page, size));
+        Page<MessageDto> messages = messageRepository.findMessagesBetweenUsers(
+                senderName,
+                receiverName,
+                PageRequest.of(page, size, Sort.by("timestamp").descending())
+        );
+
 
         return PageableResponse.<MessageDto>builder()
                 .elements(messages.getContent())
@@ -87,7 +98,7 @@ public class ChatService {
 //                .build();
 //    }
 
-    @Scheduled(fixedRate = 3600000)
+//    @Scheduled(fixedRate = 3600000)
     public void syncMessagesFromRedisToDb() {
         Set<String> keys = redisTemplate.keys("messages:*");
         if (keys != null) {
@@ -158,7 +169,6 @@ public class ChatService {
                 });
             }
         }
-
 
 
         return chatList;
