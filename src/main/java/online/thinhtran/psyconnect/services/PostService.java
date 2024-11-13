@@ -69,6 +69,8 @@ public class PostService {
                 .createdAt((LocalDateTime) postDetails[6])
                 .updatedAt((LocalDateTime) postDetails[7])
                 .liked(isLiked)
+                .authorAvatar((String) postDetails[8])
+                .thumbnail((String) postDetails[9])
                 .build();
     }
 

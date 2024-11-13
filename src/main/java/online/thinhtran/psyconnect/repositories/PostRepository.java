@@ -29,7 +29,7 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     Page<Object[]> findAllWithLikesAndComments(Pageable pageable);
 
     @Query("""
-                select p.title, p.content, t.tagName, count(distinct pl.id), count(distinct c), u.username, p.createdAt, p.updatedAt
+                select p.title, p.content, t.tagName, count(distinct pl.id), count(distinct c), u.username, p.createdAt, p.updatedAt, u.avatar, p.thumbnail
                 from Post p
                 left join PostLike pl on pl.post.id = p.id
                 left join Comment c on c.postId = p.id

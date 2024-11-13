@@ -21,6 +21,8 @@ public class PostDetailResponse {
     private Long likeCount;
     private Long commentCount;
     private Boolean liked;
+    private String authorAvatar;
+    private String thumbnail;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
