@@ -15,7 +15,7 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
     long countByPostId(Integer postId);
 
     @Query("""
-                     select new online.thinhtran.psyconnect.responses.comments.UserCommentResponse(COALESCE(d.name, p.name),u.username,c.content)
+                     select new online.thinhtran.psyconnect.responses.comments.UserCommentResponse(COALESCE(d.name, p.name),u.username,c.content, u.avatar)
                      from Comment c
                      join User u on c.userId = u.id
                      left join Doctor d on u.id = d.user.id

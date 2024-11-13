@@ -11,4 +11,5 @@ public class UserCommentResponse {
     private String fullName;
     private String username;
     private String content;
+    private String avatar;
 }
