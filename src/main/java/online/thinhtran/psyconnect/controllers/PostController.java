@@ -3,6 +3,7 @@ package online.thinhtran.psyconnect.controllers;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import online.thinhtran.psyconnect.dto.post.PostDto;
+import online.thinhtran.psyconnect.dto.post.UpdatePostDto;
 import online.thinhtran.psyconnect.entities.Post;
 import online.thinhtran.psyconnect.entities.PostLike;
 import online.thinhtran.psyconnect.entities.User;
@@ -124,6 +125,19 @@ public class PostController {
         postService.deleteOwnPost(postId, user.getId());
         return ResponseEntity.ok(Response.builder()
                 .message("Post deleted")
+                .data(true)
+                .build());
+    }
+
+    @PutMapping(value = "/{postId}", consumes = "multipart/form-data")
+    public ResponseEntity<Response<?>> updateOwnPost(
+            @PathVariable Integer postId,
+            @AuthenticationPrincipal User user,
+            @ModelAttribute UpdatePostDto updatePostDto
+    ) {
+        postService.update(updatePostDto, postId, user);
+        return ResponseEntity.ok(Response.builder()
+                .message("Post updated")
                 .data(true)
                 .build());
     }

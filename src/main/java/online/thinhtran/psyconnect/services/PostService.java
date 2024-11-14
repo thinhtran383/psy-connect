@@ -3,6 +3,7 @@ package online.thinhtran.psyconnect.services;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import online.thinhtran.psyconnect.dto.post.PostDto;
+import online.thinhtran.psyconnect.dto.post.UpdatePostDto;
 import online.thinhtran.psyconnect.entities.Post;
 import online.thinhtran.psyconnect.entities.User;
 import online.thinhtran.psyconnect.repositories.PostRepository;
@@ -172,5 +173,37 @@ public class PostService {
         commentService.deleteCommentsByPostId(postId);
         postLikeService.deleteByPostId(postId);
         postRepository.deletePostByIdAndUserId(postId, id);
+    }
+
+    @Transactional
+    @CacheEvict(value = "postCache", allEntries = true)
+    public void update(UpdatePostDto updatePostDto, Integer postId, User user) {
+        Post post = postRepository.findByIdAndUserId(postId, user.getId()).orElseThrow(
+                () -> new IllegalArgumentException("Post not found or you are not the owner")
+        );
+
+        if (updatePostDto.getThumbnail() != null) {
+            try {
+                byte[] image = updatePostDto.getThumbnail().getBytes();
+                String thumbnail = cloudinaryService.upload(image);
+                post.setThumbnail(thumbnail);
+            } catch (IOException e) {
+                log.error("Error while uploading image", e);
+            }
+        }
+
+        if (updatePostDto.getTitle() != null) {
+            post.setTitle(updatePostDto.getTitle());
+        }
+
+        if (updatePostDto.getContent() != null) {
+            post.setContent(updatePostDto.getContent());
+        }
+
+        if (updatePostDto.getTags() != null) {
+            post.setTagId(updatePostDto.getTags());
+        }
+
+        postRepository.save(post);
     }
 }

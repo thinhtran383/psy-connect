@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Integer> {
     @Query("SELECT p FROM Post p JOIN FETCH p.user u JOIN FETCH p.tagId t")
@@ -70,4 +71,6 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     @Modifying
     @Query("DELETE FROM Post p WHERE p.id = :postId AND p.user.id = :id")
     void deletePostByIdAndUserId(Integer postId, Integer id);
+
+    Optional<Post> findByIdAndUserId(Integer id, Integer id1);
 }
