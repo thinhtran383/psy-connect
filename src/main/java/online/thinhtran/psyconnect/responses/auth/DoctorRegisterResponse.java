@@ -10,4 +10,5 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class DoctorRegisterResponse extends RegisterResponse {
     private String specialization;
+    private String token;
 }

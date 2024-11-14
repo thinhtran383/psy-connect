@@ -3,6 +3,7 @@ package online.thinhtran.psyconnect.services;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import online.thinhtran.psyconnect.common.RoleEnum;
+import online.thinhtran.psyconnect.dto.user.doctor.UpdateDoctorDto;
 import online.thinhtran.psyconnect.entities.Doctor;
 import online.thinhtran.psyconnect.entities.Patient;
 import online.thinhtran.psyconnect.entities.User;
@@ -11,6 +12,7 @@ import online.thinhtran.psyconnect.repositories.DoctorRepository;
 import online.thinhtran.psyconnect.repositories.PatientRepository;
 import online.thinhtran.psyconnect.repositories.UserRepository;
 import online.thinhtran.psyconnect.responses.PageableResponse;
+import online.thinhtran.psyconnect.responses.users.UpdateUserDto;
 import online.thinhtran.psyconnect.responses.users.UserDetailResponse;
 import online.thinhtran.psyconnect.responses.users.UserResponse;
 import online.thinhtran.psyconnect.responses.users.doctor.DoctorDetailResponse;
@@ -26,6 +28,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.print.Doc;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -193,5 +196,6 @@ public class UserService {
 
         return null;
     }
+
 
 }

@@ -137,6 +137,8 @@ public class AuthService {
 
         doctorRepository.save(doctor);
 
+        String token = jwtGenerator.generateToken(user);
+
         return DoctorRegisterResponse.builder()
                 .username(user.getUsername())
                 .name(doctor.getName())
@@ -145,6 +147,7 @@ public class AuthService {
                 .phone(doctor.getPhone())
                 .dob(doctor.getDob())
                 .specialization(doctor.getSpecialization())
+                .token(token)
                 .build();
 
     }
