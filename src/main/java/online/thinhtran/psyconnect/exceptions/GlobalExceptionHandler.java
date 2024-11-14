@@ -68,4 +68,13 @@ public class GlobalExceptionHandler {
         errors.put("error", ex.getMessage());
         return errors;
     }
+
+
+    @ExceptionHandler(PostNotOwnedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public Map<String, String> handlePostNotOwned(PostNotOwnedException ex) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("error", ex.getMessage());
+        return errors;
+    }
 }

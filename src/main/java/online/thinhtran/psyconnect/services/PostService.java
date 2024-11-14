@@ -6,6 +6,7 @@ import online.thinhtran.psyconnect.dto.post.PostDto;
 import online.thinhtran.psyconnect.dto.post.UpdatePostDto;
 import online.thinhtran.psyconnect.entities.Post;
 import online.thinhtran.psyconnect.entities.User;
+import online.thinhtran.psyconnect.exceptions.PostNotOwnedException;
 import online.thinhtran.psyconnect.repositories.PostRepository;
 import online.thinhtran.psyconnect.responses.PageableResponse;
 import online.thinhtran.psyconnect.responses.post.PostDetailResponse;
@@ -179,7 +180,7 @@ public class PostService {
     @CacheEvict(value = "postCache", allEntries = true)
     public void update(UpdatePostDto updatePostDto, Integer postId, User user) {
         Post post = postRepository.findByIdAndUserId(postId, user.getId()).orElseThrow(
-                () -> new IllegalArgumentException("Post not found or you are not the owner")
+                () -> new PostNotOwnedException("Post not found or you are not the owner")
         );
 
         if (updatePostDto.getThumbnail() != null) {
