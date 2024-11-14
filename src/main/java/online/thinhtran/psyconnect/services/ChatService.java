@@ -52,8 +52,10 @@ public class ChatService {
     public PageableResponse<MessageDto> getMessage(String senderName, String receiverName, int page, int size) {
         String key = String.format("messages:%s-%s", senderName, receiverName);
 
+        log.info("Key: {}", redisTemplate.hasKey(key));
+
         // get from redis
-        if (redisTemplate.hasKey(key) != null) {
+        if (redisTemplate.hasKey(key) != null && Boolean.TRUE.equals(redisTemplate.hasKey(key))) {
             int start = (page - 1) * size;
             int end = start + size - 1;
             List<MessageDto> messageDto = redisTemplate.opsForList().range(key, start, end);
@@ -72,6 +74,8 @@ public class ChatService {
                     .build();
         }
 
+
+        // get from db
         Page<MessageDto> messages = messageRepository.findMessagesBetweenUsers(
                 senderName,
                 receiverName,
