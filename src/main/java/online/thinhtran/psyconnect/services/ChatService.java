@@ -38,8 +38,10 @@ public class ChatService {
 
         Map<String, String> avatarAndName = userService.getAvatarAndNameByUsernames(message.getReceiverName());
 
+        log.info("Avatar and name: {}", avatarAndName);
+
         message.setAvatar(avatarAndName.get("avatar"));
-        message.setFullNameReceiver(avatarAndName.get("fullName"));
+        message.setFullNameReceiver(avatarAndName.get("name"));
 
         redisTemplate.opsForList().rightPush(key, message);
         redisTemplate.expire(key, 1, java.util.concurrent.TimeUnit.DAYS);
@@ -153,27 +155,31 @@ public class ChatService {
     public List<ChatCategoriesResponse> getChatCategories(String username) {
         List<ChatCategoriesResponse> result = new ArrayList<>();
 
-        // get all keys from Redis
-        Set<String> keys = redisTemplate.keys("messages:" + username + "-*");
-        Set<String> existingReceivers = new HashSet<>();
+        // Get all keys where the user is either the sender or the receiver
+        Set<String> keys = new HashSet<>();
+        keys.addAll(redisTemplate.keys("messages:" + username + "-*"));  // as sender
+        keys.addAll(redisTemplate.keys("messages:*-" + username));       // as receiver
+
+        Set<String> existingChatUsers = new HashSet<>();
 
         if (keys != null) {
             keys.forEach(key -> {
-                String[] split = key.split("-");
+                String[] split = key.split("messages:")[1].split("-");
+                String senderName = split[0];
                 String receiverName = split[1];
-                existingReceivers.add(receiverName);
+
+                String chatPartner = senderName.equals(username) ? receiverName : senderName;
+                existingChatUsers.add(chatPartner);
 
                 // get last message from Redis
                 MessageDto lastMessage = Optional.ofNullable(redisTemplate.opsForList().range(key, -1, -1))
                         .map(messages -> messages.get(0))
                         .orElse(null);
 
-
                 if (lastMessage != null) {
-
                     ChatCategoriesResponse chatCategoriesResponse = ChatCategoriesResponse.builder()
                             .lastMessage(lastMessage.getMessage())
-                            .username(receiverName)
+                            .username(chatPartner)
                             .fullName(lastMessage.getFullNameReceiver())
                             .avatar(lastMessage.getAvatar())
                             .lastMessageTime(lastMessage.getTimestamp())
@@ -184,8 +190,8 @@ public class ChatService {
             });
         }
 
-        // get missing messages from DB
-        List<Object[]> missingMessages = messageRepository.findMessagesBySenderAndExcludedReceivers(username, existingReceivers);
+        // Get missing messages from DB for chats not present in Redis
+        List<Object[]> missingMessages = messageRepository.findMessagesBySenderAndExcludedReceivers(username, existingChatUsers);
 
         missingMessages.forEach(message -> {
             ChatCategoriesResponse chatCategoriesResponse = ChatCategoriesResponse.builder()
@@ -201,5 +207,6 @@ public class ChatService {
 
         return result;
     }
+
 
 }

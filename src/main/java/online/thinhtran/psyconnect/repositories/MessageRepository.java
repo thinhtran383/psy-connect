@@ -45,21 +45,21 @@ public interface MessageRepository extends JpaRepository<Message, Integer> {
 
     @Query(
             """
-                    SELECT m.content, m.timestamp,
-                           r.username,
-                           COALESCE(dReceiver.name, pReceiver.name) AS fullNameReceiver,
-                           s.avatar
-                    FROM Message m
-                    JOIN m.sender s
-                    LEFT JOIN Doctor d ON d.user.id = s.id
-                    LEFT JOIN Patient p ON p.user.id = s.id
-                    JOIN m.receiver r
-                    LEFT JOIN Doctor dReceiver ON dReceiver.user.id = r.id
-                    LEFT JOIN Patient pReceiver ON pReceiver.user.id = r.id
-                    WHERE s.username = :username
-                      AND r.username NOT IN :excludedReceivers
-                    ORDER BY m.timestamp DESC
-            """
+                            SELECT m.content, m.timestamp,
+                                   CASE WHEN s.username = :username THEN r.username ELSE s.username END AS chatPartner,
+                                   COALESCE(dReceiver.name, pReceiver.name, dSender.name, pSender.name) AS fullName,
+                                   CASE WHEN s.username = :username THEN r.avatar ELSE s.avatar END AS avatar
+                            FROM Message m
+                            JOIN m.sender s
+                            LEFT JOIN Doctor dSender ON dSender.user.id = s.id
+                            LEFT JOIN Patient pSender ON pSender.user.id = s.id
+                            JOIN m.receiver r
+                            LEFT JOIN Doctor dReceiver ON dReceiver.user.id = r.id
+                            LEFT JOIN Patient pReceiver ON pReceiver.user.id = r.id
+                            WHERE (:username = s.username AND r.username NOT IN :excludedReceivers)
+                               OR (:username = r.username AND s.username NOT IN :excludedReceivers)
+                            ORDER BY m.timestamp DESC
+                    """
     )
     List<Object[]> findMessagesBySenderAndExcludedReceivers(@Param("username") String username,
                                                             @Param("excludedReceivers") Set<String> excludedReceivers);
