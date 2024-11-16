@@ -11,6 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString
 public class CertificateUploadDto {
     private List<MultipartFile> images;
     private String name;

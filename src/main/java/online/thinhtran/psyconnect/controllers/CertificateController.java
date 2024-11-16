@@ -28,6 +28,7 @@ public class CertificateController {
         certificateService.uploadCertificate(certificateUploadDto, user.getId());
         return ResponseEntity.ok(Response.builder()
                 .message("Certificate uploaded successfully")
-                .build());
+                .build()
+        );
     }
 }

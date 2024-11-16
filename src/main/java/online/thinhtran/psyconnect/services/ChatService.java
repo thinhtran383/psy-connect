@@ -48,7 +48,7 @@ public class ChatService {
     }
 
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true) // todo
     public PageableResponse<MessageDto> getMessage(String senderName, String receiverName, int page, int size) {
         String key = String.format("messages:%s-%s", senderName, receiverName);
 
