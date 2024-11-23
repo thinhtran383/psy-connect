@@ -21,6 +21,7 @@ public class LoginResponse {
     private LocalDate dob;
     private String specialization;
     private String token;
+    private String avatar;
     private String role;
 
 }

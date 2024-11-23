@@ -171,6 +171,7 @@ public class AuthService {
                     .dob(doctor.getDob())
                     .specialization(doctor.getSpecialization())
                     .token(jwtToken)
+                    .avatar(user.getAvatar())
                     .role(user.getRole().name())
                     .build();
         } else {
@@ -179,6 +180,7 @@ public class AuthService {
                     .id(patient.getId())
                     .username(user.getUsername())
                     .name(patient.getName())
+                    .avatar(user.getAvatar())
                     .email(user.getEmail())
                     .phone(patient.getPhone())
                     .address(patient.getAddress())
