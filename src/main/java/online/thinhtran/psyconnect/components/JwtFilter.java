@@ -127,8 +127,8 @@ public class JwtFilter extends OncePerRequestFilter {
                 Pair.of(String.format("%s/oauth/**", apiPrefix), "POST"),
 
                 // Post endpoints
-                Pair.of(String.format("%s/posts", apiPrefix), "GET"),
-                Pair.of(String.format("%s/posts/{postId:[0-9]+}", apiPrefix), "GET")
+                Pair.of(String.format("%s/posts", apiPrefix), "GET")
+//                Pair.of(String.format("%s/posts/{postId:[0-9]+}", apiPrefix), "GET")
         );
 
         String requestPath = request.getServletPath();
