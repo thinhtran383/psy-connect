@@ -108,7 +108,7 @@ public class UserService {
                     .email(user.getEmail())
                     .phone(patient.getPhone())
                     .dob(patient.getDob())
-
+                    .avatar(user.getAvatar())
                     .role(user.getRole().name())
                     .address(patient.getAddress())
                     .createdDate(user.getCreatedAt())
