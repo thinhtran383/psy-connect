@@ -26,7 +26,6 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
-    private final MailService mailService;
 
     @PostMapping("/register")
     public ResponseEntity<Response<RegisterResponse>> register(@RequestBody RegisterDto registerDto) {
@@ -44,11 +43,22 @@ public class AuthController {
     }
 
     @PutMapping("/approve/{id}")
-    public ResponseEntity<Response<String>> approve(@PathVariable Integer id) throws BadRequest {
+    public ResponseEntity<Response<String>> approve(@PathVariable Integer id) {
         authService.approveDoctor(id);
 
         return ResponseEntity.ok(Response.<String>builder()
                 .message("Approved account with id: " + id + " successfully")
+                .build());
+    }
+
+    @PutMapping("/reject/{id}")
+    public ResponseEntity<Response<String>> reject(
+            @PathVariable Integer id
+    ) {
+        authService.rejectDoctor(id);
+
+        return ResponseEntity.ok(Response.<String>builder()
+                .message("Rejected account with id: " + id + " successfully")
                 .build());
     }
 

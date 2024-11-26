@@ -231,15 +231,26 @@ public class AuthService {
     }
 
     @Transactional
-    public void approveDoctor(Integer id) throws BadRequest {
+    @CacheEvict(value = "users", allEntries = true)
+    public void approveDoctor(Integer id) {
         Doctor doctor = doctorRepository.findByUser_Id(id)
                 .orElseThrow(() -> new ResourceNotFound("Doctor not found"));
 
         if (doctor.getUser().getRole() == RoleEnum.DOCTOR && doctor.getUser().getStatus() == StatusEnum.PENDING) {
             doctor.getUser().setStatus(StatusEnum.APPROVED);
             doctorRepository.save(doctor);
-        } else {
-            throw new BadRequest("Invalid request");
+        }
+    }
+
+    @Transactional
+    @CacheEvict(value = "users", allEntries = true)
+    public void rejectDoctor(Integer id) {
+        Doctor doctor = doctorRepository.findByUser_Id(id)
+                .orElseThrow(() -> new ResourceNotFound("Doctor not found"));
+
+        if (doctor.getUser().getRole() == RoleEnum.DOCTOR && doctor.getUser().getStatus() == StatusEnum.PENDING) {
+            doctor.getUser().setStatus(StatusEnum.REJECTED);
+            doctorRepository.save(doctor);
         }
     }
 
@@ -269,4 +280,6 @@ public class AuthService {
 
         mailService.sendMail(mailDto);
     }
+
+
 }
