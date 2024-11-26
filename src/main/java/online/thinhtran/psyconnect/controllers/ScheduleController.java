@@ -39,14 +39,15 @@ public class ScheduleController {
     public ResponseEntity<Response<PageableResponse<ScheduleResponse>>> getScheduleByPatientId(
             @AuthenticationPrincipal User user,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam StatusEnum status
     ) {
 
         log.info("Getting schedules for patient: {}", user.getId());
 
         return ResponseEntity.ok(
                 Response.<PageableResponse<ScheduleResponse>>builder()
-                        .data(scheduleService.getAllScheduleByPatientId(user.getId(), page, size))
+                        .data(scheduleService.getAllScheduleByPatientId(user.getId(), status, page, size))
                         .message("Schedules retrieved successfully")
                         .build()
         );
@@ -56,12 +57,13 @@ public class ScheduleController {
     public ResponseEntity<Response<PageableResponse<ScheduleResponse>>> getScheduleByDoctorId(
             @AuthenticationPrincipal User user,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam StatusEnum status
     ) {
 
         return ResponseEntity.ok(
                 Response.<PageableResponse<ScheduleResponse>>builder()
-                        .data(scheduleService.getAllScheduleByDoctorId(user.getId(), page, size))
+                        .data(scheduleService.getAllScheduleByDoctorId(user.getId(), status, page, size))
                         .message("Schedules retrieved successfully")
                         .build()
         );

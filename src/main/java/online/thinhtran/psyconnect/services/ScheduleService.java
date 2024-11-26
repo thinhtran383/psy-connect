@@ -30,15 +30,15 @@ public class ScheduleService {
     }
 
     @Transactional(readOnly = true)
-    public PageableResponse<ScheduleResponse> getAllScheduleByDoctorId(Integer doctorId, int page, int size) {
-        Page<ScheduleResponse> schedules = scheduleRepository.findAllByDoctorId(doctorId, PageRequest.of(page, size));
+    public PageableResponse<ScheduleResponse> getAllScheduleByDoctorId(Integer doctorId, StatusEnum statusEnum, int page, int size) {
+        Page<ScheduleResponse> schedules = scheduleRepository.findAllByDoctorId(doctorId, statusEnum, PageRequest.of(page, size));
 
         return new PageableResponse<>(schedules.getContent(), schedules.getTotalElements(), schedules.getTotalPages());
     }
 
     @Transactional(readOnly = true)
-    public PageableResponse<ScheduleResponse> getAllScheduleByPatientId(Integer patientId, int page, int size) {
-        Page<ScheduleResponse> schedules = scheduleRepository.findAllByPatientId(patientId, PageRequest.of(page, size));
+    public PageableResponse<ScheduleResponse> getAllScheduleByPatientId(Integer patientId, StatusEnum statusEnum, int page, int size) {
+        Page<ScheduleResponse> schedules = scheduleRepository.findAllByPatientId(patientId, statusEnum, PageRequest.of(page, size));
 
         return new PageableResponse<>(schedules.getContent(), schedules.getTotalElements(), schedules.getTotalPages());
     }

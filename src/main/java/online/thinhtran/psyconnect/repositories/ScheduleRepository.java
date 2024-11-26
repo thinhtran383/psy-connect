@@ -1,5 +1,6 @@
 package online.thinhtran.psyconnect.repositories;
 
+import online.thinhtran.psyconnect.common.StatusEnum;
 import online.thinhtran.psyconnect.entities.Schedule;
 import online.thinhtran.psyconnect.responses.schedule.ScheduleResponse;
 import org.springframework.data.domain.Page;
@@ -13,9 +14,9 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Integer> {
                  s.id, p.name, s.appointmentDate, s.notes, s.status, p.phone) from Schedule s
                 join User sender on s.patient = sender.id
                 join Patient p on sender.id = p.user.id
-                where s.doctor = :doctorId and s.status <> 'CANCELLED'
+                where s.doctor = :doctorId and s.status = :statusEnum
             """)
-    Page<ScheduleResponse> findAllByDoctorId(Integer doctorId, Pageable pageable);
+    Page<ScheduleResponse> findAllByDoctorId(Integer doctorId, StatusEnum statusEnum,Pageable pageable);
 
 
     @Query("""
@@ -25,9 +26,9 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Integer> {
                             from Schedule s
                                         join User u on s.doctor = u.id
                                         join Doctor d on u.id = d.user.id
-                                        where s.patient = :patientId
+                                        where s.patient = :patientId and s.status = :statusEnum
             """)
-    Page<ScheduleResponse> findAllByPatientId(Integer patientId, Pageable pageable);
+    Page<ScheduleResponse> findAllByPatientId(Integer patientId, StatusEnum statusEnum, Pageable pageable);
 
 
 }
