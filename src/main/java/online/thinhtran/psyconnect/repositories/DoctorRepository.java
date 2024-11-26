@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -47,4 +48,6 @@ public interface DoctorRepository extends JpaRepository<Doctor, Integer> {
                 ) from Doctor d where LOWER(d.specialization) = LOWER(:specialization)
             """)
     Page<DoctorInfoResponse> findDoctorsBySpecialization(String specialization, Pageable pageable);
+
+    List<Doctor> findTop5ByOrderByRatingDesc();
 }

@@ -56,8 +56,8 @@ public class AuthController {
     public ResponseEntity<Response<String>> reject(
             @PathVariable Integer id,
             @RequestBody RejectDoctor rejectDoctor
-    ) {
-        authService.rejectDoctor(id);
+    ) throws Exception {
+        authService.rejectDoctor(id, rejectDoctor);
 
         return ResponseEntity.ok(Response.<String>builder()
                 .message("Rejected account with id: " + id + " successfully")

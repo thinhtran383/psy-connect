@@ -3,6 +3,8 @@ package online.thinhtran.psyconnect.dto.mail;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.*;
 
+import java.util.Map;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -13,5 +15,7 @@ public class MailDto {
     @Hidden
     private String subject;
     @Hidden
-    private String content;
+    private Map<String, Object> placeholders;
+    @Hidden
+    private String templateName;
 }

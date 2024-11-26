@@ -11,6 +11,7 @@ import online.thinhtran.psyconnect.dto.auth.ChangePasswordDto;
 import online.thinhtran.psyconnect.dto.auth.LoginDto;
 import online.thinhtran.psyconnect.dto.auth.RegisterDto;
 import online.thinhtran.psyconnect.dto.mail.MailDto;
+import online.thinhtran.psyconnect.dto.user.doctor.RejectDoctor;
 import online.thinhtran.psyconnect.entities.Doctor;
 import online.thinhtran.psyconnect.entities.Patient;
 import online.thinhtran.psyconnect.entities.User;
@@ -32,6 +33,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -244,13 +247,28 @@ public class AuthService {
 
     @Transactional
     @CacheEvict(value = "users", allEntries = true)
-    public void rejectDoctor(Integer id) {
+    public void rejectDoctor(Integer id, RejectDoctor rejectDoctor) throws MessagingException, BadRequest {
         Doctor doctor = doctorRepository.findByUser_Id(id)
                 .orElseThrow(() -> new ResourceNotFound("Doctor not found"));
+
+        User user = doctor.getUser();
+
+        MailDto mailDto = MailDto.builder()
+                .subject("Doctor registration")
+                .templateName("reject_account")
+                .to(user.getEmail())
+                .placeholders(Map.of(
+                        "reason", rejectDoctor.getReason()
+                ))
+                .build();
+
+        mailService.sendMail(mailDto);
 
         if (doctor.getUser().getRole() == RoleEnum.DOCTOR && doctor.getUser().getStatus() == StatusEnum.PENDING) {
             doctor.getUser().setStatus(StatusEnum.REJECTED);
             doctorRepository.save(doctor);
+        } else {
+            throw new BadRequest("Invalid request");
         }
     }
 
@@ -269,14 +287,19 @@ public class AuthService {
 
     @Transactional
     @CacheEvict(value = "users", allEntries = true)
-    public void forgotPassword(MailDto mailDto) throws MessagingException, IOException {
-        mailDto.setContent(UUID.randomUUID().toString().substring(0, 8));
+    public void forgotPassword(MailDto mailDto) throws MessagingException {
+        String newPassword = UUID.randomUUID().toString().substring(0, 8);
         mailDto.setSubject("Change password");
+        mailDto.setTemplateName("change_password_template");
 
         User user = userRepository.findByEmail(mailDto.getTo())
                 .orElseThrow(() -> new BadCredentialsException("User not existed"));
 
-        user.setPassword(passwordEncoder.encode(mailDto.getContent()));
+        user.setPassword(passwordEncoder.encode(newPassword));
+
+        Map<String, Object> placeholders = new HashMap<>();
+        placeholders.put("newPassword", newPassword);
+        mailDto.setPlaceholders(placeholders);
 
         mailService.sendMail(mailDto);
     }

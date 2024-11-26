@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thông Báo Đăng Ký Tài Khoản</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border: 1px solid #dddddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .header {
+            background-color: #0073e6;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+        .content {
+            padding: 20px;
+            color: #333333;
+        }
+        .content p {
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+        .footer {
+            background-color: #f1f1f1;
+            text-align: center;
+            padding: 15px;
+            font-size: 12px;
+            color: #888888;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            color: #ffffff;
+            background-color: #0073e6;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        .button:hover {
+            background-color: #005bb5;
+        }
+    </style>
+</head>
+<body>
+<div class="email-container">
+    <div class="header">
+        <h1>Thông Báo Đăng Ký Tài Khoản</h1>
+    </div>
+    <div class="content">
+        <p>Kính gửi {{username}},</p>
+        <p>Chúng tôi rất cảm ơn bạn đã đăng ký tài khoản trên hệ thống của chúng tôi với quyền truy cập dành cho bác sĩ. Tuy nhiên, sau khi xem xét, chúng tôi rất tiếc phải thông báo rằng yêu cầu đăng ký tài khoản của bạn đã <strong>bị từ chối</strong>.
+        Với lý do <b th:text="${reason}"></b>
+
+        </p>
+        <p>Để xác minh lại yêu cầu của bạn, vui lòng cung cấp thêm các thông tin và tài liệu sau:</p>
+        <ul>
+            <li>Bản sao văn bằng hoặc chứng chỉ hành nghề.</li>
+            <li>Các giấy tờ liên quan khác (nếu có).</li>
+        </ul>
+        <p>Bạn có thể trả lời email này kèm theo các tài liệu cần thiết để chúng tôi tiến hành xác minh lại.</p>
+        <p>Chúng tôi rất mong nhận được phản hồi từ bạn.</p>
+        <p>Trân trọng,</p>
+        <p><strong>Đội ngũ hỗ trợ</strong><br>Công ty PsyConnect</p>
+    </div>
+
+</div>
+</body>
+</html>
