@@ -49,5 +49,15 @@ public interface DoctorRepository extends JpaRepository<Doctor, Integer> {
             """)
     Page<DoctorInfoResponse> findDoctorsBySpecialization(String specialization, Pageable pageable);
 
-    List<Doctor> findTop5ByOrderByRatingDesc();
+
+    @Query("""
+                select new online.thinhtran.psyconnect.responses.users.doctor.DoctorInfoResponse(
+                    d.user.id,
+                    d.name,
+                    d.user.avatar,
+                    d.specialization,
+                    d.rating
+                ) from Doctor d order by d.rating desc limit 5
+            """)
+    List<DoctorInfoResponse> findTop5ByOrderByRatingDesc();
 }

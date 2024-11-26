@@ -28,15 +28,6 @@ public class StatisticalService {
 
     @Transactional(readOnly = true)
     public List<DoctorInfoResponse> top5Doctor() {
-        List<Doctor> doctors = doctorRepository.findTop5ByOrderByRatingDesc();
-        return doctors.stream()
-                .map(doctor -> DoctorInfoResponse.builder()
-                        .id(doctor.getUser().getId())
-                        .name(doctor.getName())
-                        .avatar(doctor.getUser().getAvatar())
-                        .specialization(doctor.getSpecialization())
-                        .avgRating(doctor.getRating())
-                        .build())
-                .collect(Collectors.toList());
+        return doctorRepository.findTop5ByOrderByRatingDesc();
     }
 }
