@@ -20,13 +20,14 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Integer> {
 
     @Query("""
                 select new online.thinhtran.psyconnect.responses.schedule.ScheduleResponse(
-                 s.id, d.name, s.appointmentDate, s.notes, s.status, d.phone) from Schedule s
-                join User sender on s.patient = sender.id
-                join Doctor d on sender.id = d.user.id
-                where s.patient = :patientId
+                            s.id, d.name, s.appointmentDate, s.notes, s.status, d.phone
+                            )
+                            from Schedule s
+                                        join User u on s.doctor = u.id
+                                        join Doctor d on u.id = d.user.id
+                                        where s.patient = :patientId
             """)
     Page<ScheduleResponse> findAllByPatientId(Integer patientId, Pageable pageable);
-
 
 
 }
