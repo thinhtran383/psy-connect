@@ -15,7 +15,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("${api.base-path/schedules")
+@RequestMapping("${api.base-path}/schedules")
 @RequiredArgsConstructor
 @Slf4j
 public class ScheduleController {
