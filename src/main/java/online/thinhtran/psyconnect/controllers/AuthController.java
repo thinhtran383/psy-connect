@@ -7,6 +7,7 @@ import online.thinhtran.psyconnect.dto.auth.ChangePasswordDto;
 import online.thinhtran.psyconnect.dto.auth.LoginDto;
 import online.thinhtran.psyconnect.dto.auth.RegisterDto;
 import online.thinhtran.psyconnect.dto.mail.MailDto;
+import online.thinhtran.psyconnect.dto.user.doctor.RejectDoctor;
 import online.thinhtran.psyconnect.entities.User;
 import online.thinhtran.psyconnect.responses.auth.LoginResponse;
 import online.thinhtran.psyconnect.responses.auth.RegisterResponse;
@@ -53,7 +54,8 @@ public class AuthController {
 
     @PutMapping("/reject/{id}")
     public ResponseEntity<Response<String>> reject(
-            @PathVariable Integer id
+            @PathVariable Integer id,
+            @RequestBody RejectDoctor rejectDoctor
     ) {
         authService.rejectDoctor(id);
 
