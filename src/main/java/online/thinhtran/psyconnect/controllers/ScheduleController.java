@@ -40,7 +40,7 @@ public class ScheduleController {
             @AuthenticationPrincipal User user,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam StatusEnum status
+            @RequestParam(required = false) StatusEnum status
     ) {
 
         log.info("Getting schedules for patient: {}", user.getId());
@@ -58,7 +58,7 @@ public class ScheduleController {
             @AuthenticationPrincipal User user,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam StatusEnum status
+            @RequestParam(required = false) StatusEnum status
     ) {
 
         return ResponseEntity.ok(

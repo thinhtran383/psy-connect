@@ -11,12 +11,14 @@ import org.springframework.data.jpa.repository.Query;
 public interface ScheduleRepository extends JpaRepository<Schedule, Integer> {
     @Query("""
                 select new online.thinhtran.psyconnect.responses.schedule.ScheduleResponse(
-                 s.id, p.name, s.appointmentDate, s.notes, s.status, p.phone) from Schedule s
+                    s.id, p.name, s.appointmentDate, s.notes, s.status, p.phone)
+                from Schedule s
                 join User sender on s.patient = sender.id
                 join Patient p on sender.id = p.user.id
-                where s.doctor = :doctorId and s.status = :statusEnum
+                where s.doctor = :doctorId
+                  and (:statusEnum is null or s.status = :statusEnum)
             """)
-    Page<ScheduleResponse> findAllByDoctorId(Integer doctorId, StatusEnum statusEnum,Pageable pageable);
+    Page<ScheduleResponse> findAllByDoctorId(Integer doctorId, StatusEnum statusEnum, Pageable pageable);
 
 
     @Query("""
@@ -26,7 +28,8 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Integer> {
                             from Schedule s
                                         join User u on s.doctor = u.id
                                         join Doctor d on u.id = d.user.id
-                                        where s.patient = :patientId and s.status = :statusEnum
+                                        where s.patient = :patientId and
+                                        (:statusEnum is null or s.status = :statusEnum)
             """)
     Page<ScheduleResponse> findAllByPatientId(Integer patientId, StatusEnum statusEnum, Pageable pageable);
 
