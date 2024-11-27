@@ -5,6 +5,7 @@ import online.thinhtran.psyconnect.entities.Post;
 import online.thinhtran.psyconnect.entities.PostLike;
 import online.thinhtran.psyconnect.entities.User;
 import online.thinhtran.psyconnect.repositories.PostLikeRepository;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ public class PostLikeService {
     }
 
     @Transactional
+    @CacheEvict(value = "postCache", allEntries = true)
     public void likePost(Integer postId, Integer userId) {
         PostLike postLike = PostLike.builder()
                 .post(Post.builder().id(postId).build())
@@ -29,6 +31,7 @@ public class PostLikeService {
     }
 
     @Transactional
+    @CacheEvict(value = "postCache", allEntries = true)
     public void unLikePost(Integer postId, Integer userId) {
         postLikeRepository.deleteByPost_IdAndUser_Id(postId, userId);
     }

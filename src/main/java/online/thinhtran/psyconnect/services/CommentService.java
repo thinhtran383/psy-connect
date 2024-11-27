@@ -8,6 +8,7 @@ import online.thinhtran.psyconnect.entities.User;
 import online.thinhtran.psyconnect.repositories.CommentRepository;
 import online.thinhtran.psyconnect.responses.PageableResponse;
 import online.thinhtran.psyconnect.responses.comments.UserCommentResponse;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -38,6 +39,7 @@ public class CommentService {
     }
 
     @Transactional
+    @CacheEvict(value = "postCache", allEntries = true)
     public void commentPost(CommentDto commentDto, User user) {
         Comment comment = Comment.builder()
                 .userId(user.getId())
@@ -49,7 +51,8 @@ public class CommentService {
     }
 
     @Transactional
-    protected void deleteCommentsByPostId(Integer postId) {
+    @CacheEvict(value = "postCache", allEntries = true)
+    public void deleteCommentsByPostId(Integer postId) {
         commentRepository.deleteCommentsByPostId(postId);
     }
 }

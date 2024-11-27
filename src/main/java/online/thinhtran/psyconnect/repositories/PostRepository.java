@@ -18,16 +18,34 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
 //            "FROM Post p LEFT JOIN PostLike pl ON pl.post.id = p.id " +
 //            "LEFT JOIN Comment c ON c.post.id = p.id " +
 //            "GROUP BY p.id")
+//    @Query("""
+//                select distinct p, count(pl) as likeCount, count(c) as commentCount, u.username, t.tagName, p.thumbnail, u.avatar
+//                from Post p
+//                left join PostLike pl on pl.post.id = p.id
+//                left join Comment c on c.postId = p.id
+//                left join User u on u.id = p.user.id
+//                left join Tag t on t.id = p.tagId
+//                group by p.id
     @Query("""
-                select p, count(pl) as likeCount, count(c) as commentCount, u.username, t.tagName, p.thumbnail, u.avatar
-                from Post p
-                left join PostLike pl on pl.post.id = p.id
-                left join Comment c on c.postId = p.id
-                left join User u on u.id = p.user.id
-                left join Tag t on t.id = p.tagId
-                group by p.id
+                SELECT 
+                           p,
+                           COUNT(DISTINCT l.id), 
+                           COUNT(DISTINCT c.id), 
+                           u.avatar, 
+                           t.tagName,
+                           p.thumbnail,
+                           u.avatar
+            
+                FROM Post p
+                LEFT JOIN Tag t ON p.tagId = t.id
+                LEFT JOIN Comment c ON c.postId = p.id
+                LEFT JOIN PostLike l ON l.post.id = p.id
+                LEFT JOIN User u ON p.user.id = u.id
+                GROUP BY p.id, p.title, p.createdAt, p.content, t.tagName, u.avatar, p.thumbnail
             """)
     Page<Object[]> findAllWithLikesAndComments(Pageable pageable);
+
+//            """)
 
     @Query("""
                 select p.title, p.content, t.tagName, count(distinct pl.id), count(distinct c), u.username, p.createdAt, p.updatedAt, u.avatar, p.thumbnail
