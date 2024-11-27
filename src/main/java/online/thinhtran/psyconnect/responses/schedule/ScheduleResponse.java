@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
 @Builder
 public class ScheduleResponse {
     private Integer id;
+    private Integer userId;
+
     private String name;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")

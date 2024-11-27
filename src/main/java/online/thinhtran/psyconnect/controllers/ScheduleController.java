@@ -23,7 +23,7 @@ public class ScheduleController {
 
     @PostMapping
     public ResponseEntity<Response<?>> createAppointment(
-            ScheduleDto scheduleDto,
+            @RequestBody ScheduleDto scheduleDto,
             @AuthenticationPrincipal User user
     ) {
         scheduleService.createSchedule(scheduleDto, user.getId());
