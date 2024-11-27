@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 public interface ScheduleRepository extends JpaRepository<Schedule, Integer> {
     @Query("""
                 select new online.thinhtran.psyconnect.responses.schedule.ScheduleResponse(
-                    s.id, p.id ,p.name, s.appointmentDate, s.notes, s.status, p.phone)
+                    s.id, sender.id ,p.name, s.appointmentDate, s.notes, s.status, p.phone)
                 from Schedule s
                 join User sender on s.patient = sender.id
                 join Patient p on sender.id = p.user.id
@@ -23,7 +23,7 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Integer> {
 
     @Query("""
                 select new online.thinhtran.psyconnect.responses.schedule.ScheduleResponse(
-                            s.id,d.id, d.name, s.appointmentDate, s.notes, s.status, d.phone
+                            s.id,u.id, d.name, s.appointmentDate, s.notes, s.status, d.phone
                             )
                             from Schedule s
                                         join User u on s.doctor = u.id
