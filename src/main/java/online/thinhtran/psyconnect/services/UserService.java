@@ -238,7 +238,12 @@ public class UserService {
             if (updateDoctorDto.getAvatar() != null) {
                 String avatarUrl = cloudinaryService.upload(updateDoctorDto.getAvatar().getBytes());
                 user.setAvatar(avatarUrl);
+
+                log.info("Avatar url: {}", avatarUrl);
+
+                userRepository.save(user);
             }
+
         }
 
     }
