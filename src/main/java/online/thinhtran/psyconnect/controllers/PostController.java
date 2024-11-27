@@ -30,10 +30,12 @@ public class PostController {
     @GetMapping
     public ResponseEntity<Response<PageableResponse<PostResponse>>> getAllPosts(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10") int size,
+            @AuthenticationPrincipal User user
+
     ) {
         return ResponseEntity.ok(Response.<PageableResponse<PostResponse>>builder()
-                .data(postService.getAllPost(page, size))
+                .data(postService.getAllPost(page, size, user))
                 .build());
     }
 

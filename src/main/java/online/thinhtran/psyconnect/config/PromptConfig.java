@@ -21,4 +21,11 @@ public class PromptConfig {
 
         return Files.readString(Paths.get(resource.getURI()));
     }
+
+    @Bean
+    public String result(ResourceLoader resourceLoader) throws IOException {
+        Resource resource = resourceLoader.getResource("classpath:result.txt");
+        log.info("Load result content from: {}", Files.readString(Paths.get(resource.getURI())));
+        return Files.readString(Paths.get(resource.getURI()));
+    }
 }

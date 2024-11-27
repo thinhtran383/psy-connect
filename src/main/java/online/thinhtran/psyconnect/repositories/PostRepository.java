@@ -34,7 +34,8 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
                            u.username, 
                            t.tagName,
                            p.thumbnail,
-                           u.avatar
+                           u.avatar,
+                           p.id
             
                 FROM Post p
                 LEFT JOIN Tag t ON p.tagId = t.id

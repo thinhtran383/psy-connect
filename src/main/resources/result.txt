@@ -1,0 +1,59 @@
+Câu 1: Bạn có cảm thấy buồn rầu hay không?
+Nhiều lúc tôi cảm thấy chán hoặc buồn
+
+Câu 2: Bạn có cảm thấy bi quan hay không?
+Tôi cảm thấy nản lòng về tương lai hơn trước
+
+Câu 3: Bạn có mặc cảm thất bại hay không?
+Tôi thấy mình thất bại nhiều hơn những người khác
+
+Câu 4: Bạn có mất cảm giác vui vẻ hay thích thú hay không?
+Tôi không hài lòng với mọi cái
+
+Câu 5: Bạn có cảm giác tội lỗi hay không?
+Tôi cảm thấy mình hoàn toàn có tội
+
+Câu 6: Bạn có mặc cảm bị trừng phạt hay không?
+Tôi cảm thấy mình sẽ bị trừng phạt
+
+Câu 7: Bạn có thất vọng về mình hay không?
+Tôi thất vọng với bản thân hoặc Tôi ghê tởm bản thân
+
+Câu 8: Bạn có buộc tội bản thân hay không?
+Tôi tự chê mình về sự yếu đuối và lỗi lầm của bản thân
+
+Câu 9: Bạn có ý nghĩ tự sát hay không?
+Tôi có ý nghĩ tự sát nhưng không thực hiện
+
+Câu 10: Bạn có muốn khóc hay thường thấy tủi thân hay không?
+Hiện nay tôi luôn luôn khóc, tôi không thể dừng được
+
+Câu 11: Bạn có cảm giác bối rối, không yên tâm hay không?
+Tôi cảm thấy dễ bồn chồn và căng thẳng hơn thường lệ
+
+Câu 12: Bạn có thấy mất hết hứng thú hay không?
+Tôi không còn quan tâm đến bất kỳ điều gì nữa
+
+Câu 13: Bạn có thấy mình không có khả năng đưa ra quyết định hay không?
+Tôi chẳng còn có thể quyết định được việc gì nữa
+
+Câu 14: Bạn có cảm giác vô giá trị hay vô dụng hay không?
+Tôi cảm thấy mình vô dụng hơn so với những người xung quanh
+
+Câu 15: Bạn có mất nghị lực hay cảm thấy bất lực hay không?
+Tôi phải cố gắng để có thể khởi động làm một việc gì
+
+Câu 16: Giấc ngủ của bạn có thay đổi hay trở nên thất thường hay không?
+Tôi ngủ hơi ít hơn trước
+
+Câu 17: Bạn có cảm thấy cáu bẳn, bực tức hay không?
+Làm bất cứ việc gì tôi cũng quá mệt
+
+Câu 18: Bạn có mất cảm giác ngon miệng hay thèm ăn hay không?
+Tôi không thấy ngon miệng một chút nào cả
+
+Câu 19: Bạn có thấy khó tập trung chú ý hay không?
+Tôi không thể tập trung chú ý được như trước
+
+Câu 20: Bạn có cảm thấy mệt mỏi hay không?
+Tôi dễ mệt mỏi hơn trước

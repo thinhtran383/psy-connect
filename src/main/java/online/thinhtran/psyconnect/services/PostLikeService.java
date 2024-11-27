@@ -9,6 +9,9 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Set;
+
 @Service
 @RequiredArgsConstructor
 public class PostLikeService {
@@ -44,5 +47,10 @@ public class PostLikeService {
     @Transactional
     protected void deleteByPostId(Integer postId) {
         postLikeRepository.deleteByPostId(postId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Boolean> isLikedPostAndUser(Set<Integer> postId, Integer userId) {
+        return postLikeRepository.isLikedPostAndUser(postId, userId);
     }
 }

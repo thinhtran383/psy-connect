@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -37,9 +38,8 @@ public class PostService {
 
     @Transactional(readOnly = true)
     @Cacheable(value = "postCache", key = "#page + '_' + #page + '_' + #size")
-    public PageableResponse<PostResponse> getAllPost(int page, int size) {
+    public PageableResponse<PostResponse> getAllPost(int page, int size, User user) {
         Page<Object[]> postDetails = postRepository.findAllWithLikesAndComments(PageRequest.of(page, size, Sort.by("createdAt").descending()));
-
 
         List<PostResponse> postResponses = getPostResponse(postDetails).collect(Collectors.toList());
 

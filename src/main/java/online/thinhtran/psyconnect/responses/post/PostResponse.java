@@ -24,5 +24,6 @@ public class PostResponse {
     private Long totalLikes;
     private String avatar;
     private String thumbnail;
+    private Boolean liked;
 
 }
