@@ -31,7 +31,7 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
                            p,
                            COUNT(DISTINCT l.id), 
                            COUNT(DISTINCT c.id), 
-                           u.avatar, 
+                           u.username, 
                            t.tagName,
                            p.thumbnail,
                            u.avatar
