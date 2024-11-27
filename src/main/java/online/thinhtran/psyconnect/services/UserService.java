@@ -12,7 +12,6 @@ import online.thinhtran.psyconnect.repositories.DoctorRepository;
 import online.thinhtran.psyconnect.repositories.PatientRepository;
 import online.thinhtran.psyconnect.repositories.UserRepository;
 import online.thinhtran.psyconnect.responses.PageableResponse;
-import online.thinhtran.psyconnect.responses.users.UpdateUserDto;
 import online.thinhtran.psyconnect.responses.users.UserDetailResponse;
 import online.thinhtran.psyconnect.responses.users.UserResponse;
 import online.thinhtran.psyconnect.responses.users.doctor.DoctorDetailResponse;
@@ -28,6 +27,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,6 +42,7 @@ public class UserService {
     private final DoctorRepository doctorRepository;
     private final PatientRepository patientRepository;
     private final CertificateService certificateService;
+    private final CloudinaryService cloudinaryService;
 
     @Transactional(readOnly = true)
     @Cacheable(value = "users", key = "#username")
@@ -197,6 +198,50 @@ public class UserService {
     }
 
 
+    @Transactional
+    public void updateUser(UpdateDoctorDto updateDoctorDto, User user) throws IOException {
+        Doctor doctor = doctorRepository.findByUser_Id(user.getId()).orElse(null);
+
+        if (doctor != null) {
+            if (updateDoctorDto.getPhone() != null) {
+                doctor.setPhone(updateDoctorDto.getPhone());
+            }
+
+            if (updateDoctorDto.getAddress() != null) {
+                doctor.setAddress(updateDoctorDto.getAddress());
+            }
+
+            if (updateDoctorDto.getEmail() != null) {
+                user.setEmail(updateDoctorDto.getEmail());
+            }
+
+            if (updateDoctorDto.getName() != null) {
+                doctor.setName(updateDoctorDto.getName());
+            }
+
+            if (updateDoctorDto.getAbout() != null) {
+                doctor.setAbout(updateDoctorDto.getAbout());
+            }
+
+            if (updateDoctorDto.getDegree() != null) {
+                doctor.setDegree(updateDoctorDto.getDegree());
+            }
+
+            if (updateDoctorDto.getSpecialization() != null) {
+                doctor.setSpecialization(updateDoctorDto.getSpecialization());
+            }
+
+            if (updateDoctorDto.getDob() != null) {
+                doctor.setDob(updateDoctorDto.getDob());
+            }
+
+            if (updateDoctorDto.getAvatar() != null) {
+                String avatarUrl = cloudinaryService.upload(updateDoctorDto.getAvatar().getBytes());
+                user.setAvatar(avatarUrl);
+            }
+        }
+
+    }
 
 
 }

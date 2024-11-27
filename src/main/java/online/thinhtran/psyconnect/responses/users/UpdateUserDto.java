@@ -2,9 +2,9 @@ package online.thinhtran.psyconnect.responses.users;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -17,6 +17,5 @@ public class UpdateUserDto {
     private String phone;
     private String address;
     private LocalDate dob;
-    private String avatar;
-
+    private MultipartFile avatar;
 }

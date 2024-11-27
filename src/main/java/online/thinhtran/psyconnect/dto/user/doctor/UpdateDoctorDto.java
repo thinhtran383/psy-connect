@@ -3,6 +3,7 @@ package online.thinhtran.psyconnect.dto.user.doctor;
 import lombok.*;
 import online.thinhtran.psyconnect.responses.users.UpdateUserDto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -12,4 +13,6 @@ import java.time.LocalDateTime;
 public class UpdateDoctorDto extends UpdateUserDto {
     private String about;
     private String degree;
+    private Integer experience;
+    private String specialization;
 }

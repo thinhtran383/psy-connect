@@ -2,6 +2,7 @@ package online.thinhtran.psyconnect.controllers;
 
 import lombok.RequiredArgsConstructor;
 import online.thinhtran.psyconnect.common.RoleEnum;
+import online.thinhtran.psyconnect.dto.user.doctor.UpdateDoctorDto;
 import online.thinhtran.psyconnect.entities.User;
 import online.thinhtran.psyconnect.responses.PageableResponse;
 import online.thinhtran.psyconnect.responses.Response;
@@ -12,6 +13,8 @@ import online.thinhtran.psyconnect.services.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("${api.base-path}/users")
@@ -75,6 +78,20 @@ public class UserController {
         return ResponseEntity.ok(
                 Response.<PageableResponse<String>>builder()
                         .data(userService.getAllSpecialization(page, size))
+                        .build()
+        );
+    }
+
+    @PutMapping(value = "/doctor", consumes = "multipart/form-data")
+    public ResponseEntity<Response<?>> updateDoctorProfile(
+            @AuthenticationPrincipal User user,
+            @ModelAttribute UpdateDoctorDto updateDoctorDto
+    ) throws IOException {
+        userService.updateUser(updateDoctorDto, user);
+
+        return ResponseEntity.ok(
+                Response.builder()
+                        .message("Update doctor profile successfully")
                         .build()
         );
     }
