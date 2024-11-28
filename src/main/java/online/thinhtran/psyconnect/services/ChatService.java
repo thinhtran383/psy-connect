@@ -70,41 +70,45 @@ public class ChatService {
         }
 
         // Sắp xếp tin nhắn theo thời gian (mới nhất -> cũ nhất)
-        allMessages.sort(Comparator.comparing(MessageDto::getTimestamp).reversed());
+        allMessages.sort(Comparator.comparing(MessageDto::getTimestamp));
+
+
 
         // Trả về toàn bộ danh sách tin nhắn
         return allMessages;
     }
 
-
+    //
     public List<CategoryChatResponse> getUserChatCategories(String userId) {
         // Danh sách các cuộc trò chuyện của người dùng
         List<CategoryChatResponse> categoryChatList = new ArrayList<>();
 
-        // Lấy tất cả các khóa liên quan đến userId
+        // Lấy tất cả các khóa liên quan đến tin nhắn
         Set<String> keys = redisTemplate.keys("messages:*");
 
-        // Lọc và xử lý các khóa
-        Set<String> uniqueKeys = new HashSet<>();
+        // Tập hợp để lưu trữ các cuộc trò chuyện đã xử lý
+        Set<String> processedConversations = new HashSet<>();
+
+        // Duyệt qua các khóa
         for (String key : keys) {
             String[] keyParts = key.split("[:-]");
             String sender = keyParts[1];
             String receiver = keyParts[2];
 
-            // Sắp xếp tên để đảm bảo chỉ lưu một chiều khóa
-            String sortedKey = sender.compareTo(receiver) < 0
-                    ? String.format("messages:%s-%s", sender, receiver)
-                    : String.format("messages:%s-%s", receiver, sender);
-
-            // Nếu khóa đã xử lý, bỏ qua
-            if (uniqueKeys.contains(sortedKey)) continue;
-            uniqueKeys.add(sortedKey);
-
             // Kiểm tra nếu userId liên quan đến khóa này
             if (!sender.equals(userId) && !receiver.equals(userId)) continue;
 
+            // Tạo một khóa chuẩn hóa để kiểm tra trùng lặp
+            String normalizedKey = sender.compareTo(receiver) < 0
+                    ? sender + "-" + receiver
+                    : receiver + "-" + sender;
+
+            // Nếu cuộc trò chuyện đã được xử lý, bỏ qua
+            if (processedConversations.contains(normalizedKey)) continue;
+            processedConversations.add(normalizedKey);
+
             // Lấy tin nhắn cuối cùng từ Redis
-            List<MessageDto> messages = redisTemplate.opsForList().range(sortedKey, 0, -1);
+            List<MessageDto> messages = redisTemplate.opsForList().range(key, 0, -1);
             if (messages != null && !messages.isEmpty()) {
                 MessageDto lastMessage = messages.get(messages.size() - 1);
 
@@ -124,6 +128,7 @@ public class ChatService {
                 categoryChatList.add(categoryChat);
             }
         }
+
 
         return categoryChatList;
     }
