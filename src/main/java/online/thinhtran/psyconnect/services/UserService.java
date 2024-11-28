@@ -198,6 +198,17 @@ public class UserService {
     }
 
 
+    @Transactional(readOnly = true)
+    public Doctor findDoctorByUserId(Integer userId) {
+        return doctorRepository.findByUser_Id(userId).orElseThrow(() -> new ResourceNotFound("Doctor not found"));
+    }
+
+    @Transactional(readOnly = true)
+    public Patient findPatientByUserId(Integer userId) {
+        return patientRepository.findByUser_Id(userId).orElseThrow(() -> new ResourceNotFound("Patient not found"));
+    }
+
+
     @Transactional
     public void updateUser(UpdateDoctorDto updateDoctorDto, User user) throws IOException {
         Doctor doctor = doctorRepository.findByUser_Id(user.getId()).orElse(null);

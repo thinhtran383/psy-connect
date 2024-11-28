@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thông Báo Đăng Ký Tài Khoản</title>
+    <title>Thông Báo Lịch Hẹn Mới</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -20,7 +20,7 @@
             overflow: hidden;
         }
         .header {
-            background-color: #0073e6;
+            background-color: #007bff;
             color: #ffffff;
             padding: 20px;
             text-align: center;
@@ -44,38 +44,35 @@
             display: inline-block;
             padding: 10px 20px;
             color: #ffffff;
-            background-color: #0073e6;
+            background-color: #007bff;
             border-radius: 5px;
             text-decoration: none;
             font-size: 16px;
         }
         .button:hover {
-            background-color: #005bb5;
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
 <div class="email-container">
     <div class="header">
-        <h1>Thông Báo Đăng Ký Tài Khoản</h1>
+        <h1>Thông Báo Lịch Hẹn Mới</h1>
     </div>
     <div class="content">
-        <p>Kính gửi, <b th:text="${username}"></b></p>
-        <p>Chúng tôi rất cảm ơn bạn đã đăng ký tài khoản trên hệ thống của chúng tôi với quyền truy cập dành cho bác sĩ. Tuy nhiên, sau khi xem xét, chúng tôi rất tiếc phải thông báo rằng yêu cầu đăng ký tài khoản của bạn đã <strong>bị từ chối</strong>.
-        Với lý do <b th:text="${reason}"></b>
-
-        </p>
-        <p>Để xác minh lại yêu cầu của bạn, vui lòng cung cấp thêm các thông tin và tài liệu sau:</p>
+        <p>Kính gửi, <b th:text="${doctorName}"></b></p>
+        <p>Chúng tôi xin thông báo rằng bạn có một lịch hẹn mới được đặt trên hệ thống PsyConnect. Dưới đây là thông tin chi tiết:</p>
         <ul>
-            <li>Bản sao văn bằng hoặc chứng chỉ hành nghề.</li>
-            <li>Các giấy tờ liên quan khác (nếu có).</li>
+            <li><strong>Tên bệnh nhân:</strong> <span th:text="${patientName}"></span></li>
+            <li><strong>Thời gian:</strong> <span th:text="${appointmentTime}"></span></li>
+            <li><strong>Ngày:</strong> <span th:text="${appointmentDate}"></span></li>
+            <li><strong>Nội dung cuộc hẹn:</strong> <span th:text="${appointmentDetails}"></span></li>
         </ul>
-        <p>Bạn có thể trả lời email này kèm theo các tài liệu cần thiết để chúng tôi tiến hành xác minh lại.</p>
-        <p>Chúng tôi rất mong nhận được phản hồi từ bạn.</p>
+        <p>Vui lòng đăng nhập vào hệ thống để kiểm tra thêm thông tin chi tiết hoặc liên hệ với bệnh nhân nếu cần thiết. Chúng tôi khuyến nghị bạn xác nhận lại cuộc hẹn để đảm bảo không có nhầm lẫn.</p>
+        <p>Nếu bạn không thể tham gia lịch hẹn này, vui lòng thông báo sớm qua hệ thống hoặc liên hệ với đội ngũ hỗ trợ của chúng tôi.</p>
         <p>Trân trọng,</p>
         <p><strong>Đội ngũ hỗ trợ</strong><br>Công ty PsyConnect</p>
     </div>
-
 </div>
 </body>
 </html>

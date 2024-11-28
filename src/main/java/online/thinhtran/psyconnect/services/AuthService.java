@@ -165,7 +165,7 @@ public class AuthService {
         if (loginDto.getRole().equalsIgnoreCase(RoleEnum.DOCTOR.name())) {
             Doctor doctor = doctorRepository.findByUser_Username(user.getUsername()).orElseThrow();
             return LoginResponse.builder()
-                    .id(doctor.getId())
+                    .id(user.getId())
                     .username(user.getUsername())
                     .name(doctor.getName())
                     .email(user.getEmail())
@@ -180,7 +180,7 @@ public class AuthService {
         } else {
             Patient patient = patientRepository.findByUser_Username(user.getUsername()).orElseThrow();
             return LoginResponse.builder()
-                    .id(patient.getId())
+                    .id(user.getId())
                     .username(user.getUsername())
                     .name(patient.getName())
                     .avatar(user.getAvatar())
@@ -258,7 +258,8 @@ public class AuthService {
                 .templateName("reject_account")
                 .to(user.getEmail())
                 .placeholders(Map.of(
-                        "reason", rejectDoctor.getReason()
+                        "reason", rejectDoctor.getReason(),
+                        "username", doctor.getName()
                 ))
                 .build();
 

@@ -8,6 +8,7 @@ import online.thinhtran.psyconnect.entities.UserAnswer;
 import online.thinhtran.psyconnect.repositories.QuizRepository;
 import online.thinhtran.psyconnect.repositories.UserAnswerRepository;
 import online.thinhtran.psyconnect.responses.quiz.QuizResponse;
+import online.thinhtran.psyconnect.responses.quiz.QuizResultResponse;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,5 +53,10 @@ public class QuizService {
                 .toList();
 
         userAnswerRepository.saveAll(userAnswers);
+    }
+
+    @Transactional(readOnly = true)
+    public List<QuizResultResponse> getQuizResult(User userId) {
+        return userAnswerRepository.getAnswerByUserId(userId.getId());
     }
 }

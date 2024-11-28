@@ -1,5 +1,6 @@
 package online.thinhtran.psyconnect.controllers;
 
+import jakarta.mail.MessagingException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,7 @@ public class ScheduleController {
     public ResponseEntity<Response<?>> createAppointment(
             @RequestBody ScheduleDto scheduleDto,
             @AuthenticationPrincipal User user
-    ) {
+    ) throws MessagingException {
         scheduleService.createSchedule(scheduleDto, user.getId());
         return ResponseEntity.ok(
                 Response.builder()

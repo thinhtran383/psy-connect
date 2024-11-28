@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thông Báo Hủy Cuộc Hẹn</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border: 1px solid #dddddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .header {
+            background-color: #dc3545;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+        .content {
+            padding: 20px;
+            color: #333333;
+        }
+        .content p {
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+        .footer {
+            background-color: #f1f1f1;
+            text-align: center;
+            padding: 15px;
+            font-size: 12px;
+            color: #888888;
+        }
+    </style>
+</head>
+<body>
+<div class="email-container">
+    <div class="header">
+        <h1>Thông Báo Hủy Cuộc Hẹn</h1>
+    </div>
+    <div class="content">
+        <p>Kính gửi, <b th:text="${recipientName}"></b></p>
+        <p>Chúng tôi xin thông báo rằng lịch hẹn sau đã được hủy trên hệ thống PsyConnect:</p>
+        <ul>
+            <li><strong>Tên người hủy:</strong> <span th:text="${cancelerName}"></span></li>
+            <li><strong>Đối tượng còn lại:</strong> <span th:text="${otherPartyName}"></span></li>
+            <li><strong>Thời gian:</strong> <span th:text="${appointmentTime}"></span></li>
+            <li><strong>Ngày:</strong> <span th:text="${appointmentDate}"></span></li>
+            <li><strong>Nội dung cuộc hẹn:</strong> <span th:text="${appointmentDetails}"></span></li>
+            <li><strong>Lý do:</strong> <span th:text="${reason}"></span></li>
+        </ul>
+        <p>Chúng tôi rất tiếc về sự bất tiện này. Bạn có thể xem thêm chi tiết hoặc đặt lại cuộc hẹn mới trên hệ thống PsyConnect nếu cần thiết.</p>
+        <p>Trân trọng,</p>
+        <p><strong>Đội ngũ hỗ trợ</strong><br>Công ty PsyConnect</p>
+    </div>
+</div>
+</body>
+</html>
