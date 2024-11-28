@@ -15,4 +15,6 @@ public interface UserAnswerRepository extends JpaRepository<UserAnswer, Integer>
             where ua.userId = :userId
             """)
     List<QuizResultResponse> getAnswerByUserId(Integer userId);
+
+    void deleteAllByUserId(Integer id);
 }

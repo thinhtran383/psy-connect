@@ -28,7 +28,6 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final MailService mailService;
     private final UserService userService;
-    private final ScheduledTasksEndpoint scheduledTasksEndpoint;
 
     @Transactional
     public void createSchedule(ScheduleDto scheduleDto, Integer patientId) throws MessagingException {

@@ -40,6 +40,8 @@ public class QuizController {
             @RequestBody List<QuizAnswerDto> answerDto,
             @AuthenticationPrincipal User user
     ) {
+        quizService.deleteAllUserAnswersByUserId(user);
+
         quizService.saveAnswer(answerDto, user.getId());
 
         StringBuilder answer = new StringBuilder();

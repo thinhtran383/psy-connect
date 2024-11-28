@@ -59,4 +59,9 @@ public class QuizService {
     public List<QuizResultResponse> getQuizResult(User userId) {
         return userAnswerRepository.getAnswerByUserId(userId.getId());
     }
+
+    @Transactional
+    public void deleteAllUserAnswersByUserId(User userId) {
+        userAnswerRepository.deleteAllByUserId(userId.getId());
+    }
 }
