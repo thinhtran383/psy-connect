@@ -25,15 +25,15 @@ public class ChatController {
     private final ChatService chatService;
 
     @GetMapping
-    public ResponseEntity<Response<PageableResponse<MessageDto>>> getMessages(
+    public ResponseEntity<Response<List<MessageDto>>> getMessages(
             @AuthenticationPrincipal User user,
             @RequestParam String receiverName,
             @RequestParam(defaultValue = "0", required = false) int page,
             @RequestParam(defaultValue = "10", required = false) int size
     ) {
-        PageableResponse<MessageDto> messages = chatService.getMessage(user.getUsername(), receiverName, page, size);
+        List<MessageDto> messages = chatService.getMessage(user.getUsername(), receiverName);
 
-        return ResponseEntity.ok(Response.<PageableResponse<MessageDto>>builder()
+        return ResponseEntity.ok(Response.<List<MessageDto>>builder()
                 .data(messages)
                 .message("Messages retrieved successfully")
                 .build());

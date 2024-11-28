@@ -16,6 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -30,10 +33,23 @@ public class QuizService {
         List<QuizResponse> quizResponses = new ArrayList<>();
 
         quizzes.forEach(quiz -> {
+            List<String> choices = Stream.of(
+                            quiz.getOption1(),
+                            quiz.getOption2(),
+                            quiz.getOption3(),
+                            quiz.getOption4(),
+                            quiz.getOption5(),
+                            quiz.getOption6(),
+                            quiz.getOption7(),
+                            quiz.getOption8()
+                    )
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+
             QuizResponse response = QuizResponse.builder()
                     .id(quiz.getId())
                     .question(quiz.getQuestion())
-                    .choice(Arrays.asList(quiz.getOption1(), quiz.getOption2(), quiz.getOption3(), quiz.getOption4()))
+                    .choice(choices)
                     .build();
             quizResponses.add(response);
         });

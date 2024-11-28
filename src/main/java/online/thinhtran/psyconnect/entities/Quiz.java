@@ -46,6 +46,27 @@ public class Quiz {
     private String option4;
 
     @Size(max = 255)
+    @NotNull
+    @Column(name = "option_5", nullable = false)
+    private String option5;
+
+    @Size(max = 255)
+    @NotNull
+    @Column(name = "option_6", nullable = false)
+    private String option6;
+
+    @Size(max = 255)
+    @NotNull
+    @Column(name = "option_7", nullable = false)
+    private String option7;
+
+    @Size(max = 255)
+    @NotNull
+    @Column(name = "option_8", nullable = false)
+    private String option8;
+
+
+    @Size(max = 255)
     @Column(name = "correct_answer")
     private String correctAnswer;
 

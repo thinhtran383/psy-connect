@@ -45,32 +45,37 @@ public class ChatService {
     }
 
 
-    public PageableResponse<MessageDto> getMessage(String senderName, String receiverName, int page, int size) {
-        String key = String.format("messages:%s-%s", senderName, receiverName);
+    public List<MessageDto> getMessage(String senderName, String receiverName) {
+        // Khóa theo cả hai chiều
+        String key1 = String.format("messages:%s-%s", senderName, receiverName);
+        String key2 = String.format("messages:%s-%s", receiverName, senderName);
 
-        log.info("Key: {}", redisTemplate.hasKey(key));
+        // Tập hợp tin nhắn
+        List<MessageDto> allMessages = new ArrayList<>();
 
-        // get from redis
-        if (redisTemplate.hasKey(key) != null && Boolean.TRUE.equals(redisTemplate.hasKey(key))) {
-            int start = (page - 1) * size;
-            int end = start + size - 1;
-            List<MessageDto> messageDto = redisTemplate.opsForList().range(key, start, end);
-
-            if (messageDto != null) {
-                messageDto.sort(Comparator.comparing(MessageDto::getTimestamp).reversed());
+        // Lấy tin nhắn từ khóa thứ nhất
+        if (Boolean.TRUE.equals(redisTemplate.hasKey(key1))) {
+            List<MessageDto> messagesFromKey1 = redisTemplate.opsForList().range(key1, 0, -1);
+            if (messagesFromKey1 != null) {
+                allMessages.addAll(messagesFromKey1);
             }
-
-            long totalElements = Optional.ofNullable(redisTemplate.opsForList().size(key)).orElse(0L);
-            long totalPages = (totalElements + size - 1) / size;
-
-            return PageableResponse.<MessageDto>builder()
-                    .totalPages(totalPages)
-                    .totalElements(totalElements)
-                    .elements(messageDto)
-                    .build();
         }
-        return null;
+
+        // Lấy tin nhắn từ khóa thứ hai
+        if (Boolean.TRUE.equals(redisTemplate.hasKey(key2))) {
+            List<MessageDto> messagesFromKey2 = redisTemplate.opsForList().range(key2, 0, -1);
+            if (messagesFromKey2 != null) {
+                allMessages.addAll(messagesFromKey2);
+            }
+        }
+
+        // Sắp xếp tin nhắn theo thời gian (mới nhất -> cũ nhất)
+        allMessages.sort(Comparator.comparing(MessageDto::getTimestamp).reversed());
+
+        // Trả về toàn bộ danh sách tin nhắn
+        return allMessages;
     }
+
 
     public List<CategoryChatResponse> getUserChatCategories(String userId) {
         // Danh sách các cuộc trò chuyện của người dùng
@@ -106,12 +111,12 @@ public class ChatService {
                 // Xác định "người kia"
                 String otherUser = sender.equals(userId) ? receiver : sender;
 
-                Map<String, String> nameAndAvatar =  userService.getAvatarAndNameByUsernames(otherUser);
+                Map<String, String> nameAndAvatar = userService.getAvatarAndNameByUsernames(otherUser);
 
                 // Tạo đối tượng phản hồi
                 CategoryChatResponse categoryChat = new CategoryChatResponse();
-                categoryChat.setReceiverName(otherUser);
-                categoryChat.setFullNameReceiver(nameAndAvatar.get("name"));
+                categoryChat.setUsername(otherUser);
+                categoryChat.setFullName(nameAndAvatar.get("name"));
                 categoryChat.setAvatar(nameAndAvatar.get("avatar"));
                 categoryChat.setLastMessage(lastMessage.getMessage());
                 categoryChat.setLastMessageTime(String.valueOf(lastMessage.getTimestamp()));
@@ -122,8 +127,6 @@ public class ChatService {
 
         return categoryChatList;
     }
-
-
 
 
 }

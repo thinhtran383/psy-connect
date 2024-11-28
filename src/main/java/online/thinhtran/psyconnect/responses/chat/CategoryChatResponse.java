@@ -8,8 +8,8 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class CategoryChatResponse {
-    private String receiverName;
-    private String fullNameReceiver;
+    private String username;
+    private String fullName;
     private String avatar;
     private String lastMessage;
     private String lastMessageTime;
