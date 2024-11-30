@@ -43,51 +43,53 @@ public class WebSecurityConfig {
 
 
         httpSecurity.authorizeHttpRequests(request -> {
-            request
-                    .requestMatchers(
-                            // swagger
-                            "/swagger-ui/**",
-                            "/v3/api-docs/",
-                            "/v3/api-docs/**",
-                            "/api-docs",
-                            "/api-docs/**",
-                            "/swagger-resources",
-                            "/swagger-resources/**",
-                            "/configuration/ui",
-                            "/configuration/security",
-                            "/swagger-ui/**",
-                            "/swagger-ui.html",
+            request.anyRequest().permitAll();
 
-                            // login
-                            String.format("%s/auth/login", apiPrefix),
-                            String.format("%s/auth/register", apiPrefix),
-                            String.format("%s/auth/admin/login", apiPrefix),
-
-                            // chat
-                            "/socket.io/**",
-                            "/socket.io",
-                            "/ws/**",
-                            "/ws",
-                            "/user",
-                            "/user/**",
-                            "/info",
-                            "/info/**",
-
-                            // oauth
-                            String.format("%s/oauth/**", apiPrefix),
-                            "/login/oauth2/code/**",
-                            "/oauth2/authorization/**",
-                            "/favicon.ico",
-
-                            // post
-                            String.format("%s/posts", apiPrefix),
-                            String.format("%s/posts/{postId}", apiPrefix)
-
-
-                    ).permitAll();
+//            request
+//                    .requestMatchers(
+//                            // swagger
+//                            "/swagger-ui/**",
+//                            "/v3/api-docs/",
+//                            "/v3/api-docs/**",
+//                            "/api-docs",
+//                            "/api-docs/**",
+//                            "/swagger-resources",
+//                            "/swagger-resources/**",
+//                            "/configuration/ui",
+//                            "/configuration/security",
+//                            "/swagger-ui/**",
+//                            "/swagger-ui.html",
+//
+//                            // login
+//                            String.format("%s/auth/login", apiPrefix),
+//                            String.format("%s/auth/register", apiPrefix),
+//                            String.format("%s/auth/admin/login", apiPrefix),
+//
+//                            // chat
+//                            "/socket.io/**",
+//                            "/socket.io",
+//                            "/ws/**",
+//                            "/ws",
+//                            "/user",
+//                            "/user/**",
+//                            "/info",
+//                            "/info/**",
+//
+//                            // oauth
+//                            String.format("%s/oauth/**", apiPrefix),
+//                            "/login/oauth2/code/**",
+//                            "/oauth2/authorization/**",
+//                            "/favicon.ico",
+//
+//                            // post
+//                            String.format("%s/posts", apiPrefix),
+//                            String.format("%s/posts/{postId}", apiPrefix)
+//
+//
+//                    ).permitAll();
         });
 
-        httpSecurity.authorizeHttpRequests(request -> request.anyRequest().authenticated());
+//        httpSecurity.authorizeHttpRequests(request -> request.anyRequest().authenticated());
         httpSecurity
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .authenticationProvider(authenticationProvider);

@@ -18,4 +18,5 @@ public class MailDto {
     private Map<String, Object> placeholders;
     @Hidden
     private String templateName;
+
 }

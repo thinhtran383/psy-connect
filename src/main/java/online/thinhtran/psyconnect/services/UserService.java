@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -188,11 +189,17 @@ public class UserService {
     protected Map<String, String> getAvatarAndNameByUsernames(String username) {
         Doctor doctor = doctorRepository.findByUser_Username(username).orElse(null);
         if (doctor != null) {
-            return Map.of("avatar", doctor.getUser().getAvatar(), "name", doctor.getName());
+            Map<String, String> result = new HashMap<>();
+            result.put("avatar", doctor.getUser().getAvatar());
+            result.put("name", doctor.getName());
+            return result;
         } else {
             Patient patient = patientRepository.findByUser_Username(username).orElse(null);
             if (patient != null) {
-                return Map.of("avatar", patient.getUser().getAvatar(), "name", patient.getName());
+                Map<String, String> result = new HashMap<>();
+                result.put("avatar", patient.getUser().getAvatar());
+                result.put("name", patient.getName());
+                return result;
             }
         }
 
