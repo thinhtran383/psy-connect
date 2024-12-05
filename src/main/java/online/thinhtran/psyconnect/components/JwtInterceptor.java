@@ -27,7 +27,6 @@ public class JwtInterceptor implements ChannelInterceptor {
         SimpMessageHeaderAccessor accessor = SimpMessageHeaderAccessor.wrap(message);
 
         // Check if the message type is CONNECT to intercept only initial connections
-        if (SimpMessageType.CONNECT.equals(accessor.getMessageType())) {
             String authorizationHeader = accessor.getFirstNativeHeader("Authorization");
 
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
@@ -52,7 +51,6 @@ public class JwtInterceptor implements ChannelInterceptor {
                     log.info("User authenticated on CONNECT: {}", username);
                 }
             }
-        }
 
         return message;
     }
